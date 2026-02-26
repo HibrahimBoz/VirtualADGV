@@ -253,13 +253,32 @@ namespace Zuby.ADGV
             // Style Buttons
             if (_isDarkMode)
             {
-                StyleButton(button_ok, "Tamam", Color.FromArgb(59, 130, 246), Color.White);
-                StyleButton(button_cancel, "İptal", Color.FromArgb(51, 65, 85), Color.White);
+                StyleButton(button_ok, "Tamam", Color.FromArgb(59, 130, 246), Color.White, Color.FromArgb(71, 85, 105));
+                StyleButton(button_cancel, "İptal", Color.FromArgb(51, 65, 85), Color.White, Color.FromArgb(71, 85, 105));
             }
             else
             {
-                StyleButton(button_ok, "Tamam", Color.FromArgb(33, 115, 70), Color.White);
-                StyleButton(button_cancel, "İptal", Color.White, Color.Black);
+                StyleButton(button_ok, "Tamam", Color.FromArgb(33, 115, 70), Color.White, Color.Silver);
+                StyleButton(button_cancel, "İptal", Color.White, Color.Black, Color.Silver);
+            }
+
+            // Style Dynamic Controls & Radio Buttons
+            Color ctrlBg = _isDarkMode ? Color.FromArgb(15, 23, 42) : Color.White;
+            Color ctrlFg = _isDarkMode ? Color.White : Color.Black;
+            Color lblFg = _isDarkMode ? Color.FromArgb(241, 245, 249) : Color.Black;
+
+            radioButton_and.ForeColor = lblFg;
+            radioButton_or.ForeColor = lblFg;
+
+            if (_valControl1 != null)
+            {
+                _valControl1.BackColor = ctrlBg;
+                _valControl1.ForeColor = ctrlFg;
+            }
+            if (_valControl2 != null)
+            {
+                _valControl2.BackColor = ctrlBg;
+                _valControl2.ForeColor = ctrlFg;
             }
 
             // Adjust sizing and layout
@@ -287,14 +306,14 @@ namespace Zuby.ADGV
             button_cancel.Location = new Point(320, 160);
         }
 
-        private void StyleButton(Button btn, string text, Color backColor, Color foreColor)
+        private void StyleButton(Button btn, string text, Color backColor, Color foreColor, Color borderColor)
         {
             btn.Text = text;
             btn.BackColor = backColor;
             btn.ForeColor = foreColor;
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 1;
-            btn.FlatAppearance.BorderColor = Color.DarkGray;
+            btn.FlatAppearance.BorderColor = borderColor;
             btn.Font = new Font("Segoe UI", 9f);
             btn.Size = new Size(80, 28);
             btn.Cursor = Cursors.Hand;

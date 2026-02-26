@@ -21,7 +21,6 @@
     * **DuckDB Compatibility**: Fixed `Convert` function syntax for DuckDB compatibility.
     * **UI Layout Fixes**: Resolved filter checklist button cutoff and overlap issues.
     * **Modern Aesthetics**: Applied modern parametric styling with full high-DPI support.
-* **[FIX] Modern .NET Resource Loading**: Resolved the `MissingManifestResourceException` commonly encountered in .NET 5, 6, 7, and 8 environments.
 * **Advanced Filtering & Sorting**: Retains the powerful Excel-like filtering and multi-column sorting from the original ADGV.
 
 ---
@@ -43,7 +42,6 @@
     * **DuckDB Uyumluluğu**: `Convert` fonksiyonu sözdizimi DuckDB uyumluluğu için düzeltildi.
     * **UI Yerleşim Düzeltmeleri**: Filtre listesi butonlarının kesilme ve üst üste binme sorunları giderildi.
     * **Modern Estetik**: Yüksek DPI destekli, tam parametrik modern tasarım uygulandı.
-* **[DÜZELTME] Modern .NET Kaynak Yükleme**: .NET 5, 6, 7 ve 8 ortamlarında sıkça karşılaşılan `MissingManifestResourceException` hatası çözüldü.
 * **Gelişmiş Filtreleme ve Sıralama**: Orijinal ADGV'nin sunduğu güçlü Excel tarzı filtreleme ve çok sütunlu sıralama özelliklerini korur.
 
 ---

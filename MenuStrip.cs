@@ -235,7 +235,7 @@ namespace Zuby.ADGV
 
             // 6. Search Placeholder Logic
             UpdateSearchPlaceholder();
-            checkTextFilter.Enter += (s, e) => { if (checkTextFilter.Text == "Ara") { checkTextFilter.Text = ""; checkTextFilter.ForeColor = Color.Black; } };
+            checkTextFilter.Enter += (s, e) => { if (checkTextFilter.Text == "Ara") { checkTextFilter.Text = ""; checkTextFilter.ForeColor = _isDarkMode ? Color.White : Color.Black; } };
             checkTextFilter.Leave += (s, e) => { UpdateSearchPlaceholder(); };
         }
 
@@ -248,7 +248,7 @@ namespace Zuby.ADGV
             }
             else
             {
-                checkTextFilter.ForeColor = Color.Black;
+                checkTextFilter.ForeColor = _isDarkMode ? Color.White : Color.Black;
             }
         }
 

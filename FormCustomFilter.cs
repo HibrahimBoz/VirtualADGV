@@ -155,15 +155,29 @@ namespace Zuby.ADGV
             }
 
             foreach (var item in comboBox_filterType.Items)
-                comboBox_filterType2.Items.Add(item);
+            {
+                // Do not add "Between" to the second combo if it's there
+                if (item.ToString() != AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBetween.ToString()])
+                    comboBox_filterType2.Items.Add(item);
+            }
 
             // Initial selections
-            if (initialFilterType != null && comboBox_filterType.Items.Contains(initialFilterType))
-                comboBox_filterType.SelectedItem = initialFilterType;
+            if (initialFilterType != null)
+            {
+                if (initialFilterType == AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVBetween.ToString()])
+                {
+                    comboBox_filterType.SelectedItem = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVGreaterThanOrEqualTo.ToString()];
+                    comboBox_filterType2.SelectedItem = AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVLessThanOrEqualTo.ToString()];
+                    radioButton_and.Checked = true;
+                }
+                else if (comboBox_filterType.Items.Contains(initialFilterType))
+                    comboBox_filterType.SelectedItem = initialFilterType;
+            }
             else
                 comboBox_filterType.SelectedIndex = 0;
             
-            comboBox_filterType2.SelectedIndex = 0;
+            if (comboBox_filterType2.SelectedIndex == -1)
+                comboBox_filterType2.SelectedIndex = 0;
 
             // Positioning and Layout
             comboBox_filterType.Location = new Point(10, 30);

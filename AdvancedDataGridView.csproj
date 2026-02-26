@@ -9,10 +9,10 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyName>AdvancedDataGridView</AssemblyName>
-    <Version>1.1.4</Version>
-    <AssemblyVersion>1.1.4</AssemblyVersion>
-    <FileVersion>1.1.4</FileVersion>
-    <PackageVersion>1.1.4</PackageVersion>
+    <Version>1.1.3</Version>
+    <AssemblyVersion>1.1.3</AssemblyVersion>
+    <FileVersion>1.1.3</FileVersion>
+    <PackageVersion>1.1.3</PackageVersion>
     <Title>Virtual ADGV</Title>
     <Description>.NET WinForms DataGridView with advanced Filtering and Sorting capabilities - Enhanced Fork with Virtual Mode Support and High-Performance Selection Logic.</Description>
     <PackageReleaseNotes>v1.1.0: Added advanced Virtual Mode selection (Shift/Ctrl/Range support), enhanced scrolling performance for large datasets, and seamless native-to-virtual selection promotion.</PackageReleaseNotes>

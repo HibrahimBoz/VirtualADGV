@@ -16,7 +16,7 @@
 
 ### Key Features & Improvements
 
-* **[NEW] Full Theme Support (v1.1.4)**:
+* **[NEW] Full Theme Support (v1.1.3)**:
     * **SetTheme(bool isDarkMode) API**: Programmatically switch between Dark and Light modes for the entire filter menu, including search boxes, treeviews, and buttons.
     * **DuckDB Compatibility**: Fixed `Convert` function syntax for DuckDB compatibility.
     * **UI Layout Fixes**: Resolved filter checklist button cutoff and overlap issues.
@@ -38,7 +38,7 @@
 
 ### Temel Özellikler ve İyileştirmeler
 
-* **[YENİ] Tam Tema Desteği (v1.1.4)**:
+* **[YENİ] Tam Tema Desteği (v1.1.3)**:
     * **SetTheme(bool isDarkMode) API**: Arama kutusu, liste ve butonlar dahil tüm filtre menüsünü uygulama temasına (Koyu/Açık) entegre eden yeni API eklendi.
     * **DuckDB Uyumluluğu**: `Convert` fonksiyonu sözdizimi DuckDB uyumluluğu için düzeltildi.
     * **UI Yerleşim Düzeltmeleri**: Filtre listesi butonlarının kesilme ve üst üste binme sorunları giderildi.

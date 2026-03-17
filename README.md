@@ -16,6 +16,10 @@
 
 ### Key Features & Improvements
 
+* **[NEW] Numeric Sorting & UI Optimization (v1.1.6)**:
+    * **Precision Sorting**: Implemented high-precision `decimal` sorting for numeric columns in filter checklists.
+    * **Instant Selection**: Optimized "Select All" and `Ctrl+A` operations using Virtual Selection logic, providing `O(1)` instant response even on millions of rows.
+    * **Focus Management**: Enhanced grid focus handling during header interactions to prevent focus loss.
 * **[NEW] Full Theme Support (v1.1.5)**:
     * **SetTheme(bool isDarkMode) API**: Programmatically switch between Dark and Light modes for the entire filter menu, including search boxes, treeviews, and buttons.
     * **DuckDB Compatibility**: Fixed `Convert` function syntax for DuckDB compatibility.
@@ -37,6 +41,10 @@
 
 ### Temel Özellikler ve İyileştirmeler
 
+* **[YENİ] Sayısal Sıralama ve UI Optimizasyonu (v1.1.6)**:
+    * **Hassas Sıralama**: Filtre listesinde sayısal kolonlar için `decimal` hassasiyetinde doğru sıralama mantığı eklendi.
+    * **Anlık Seçim**: "Tümünü Seç" ve `Ctrl+A` işlemleri Sanal Seçim mantığıyla optimize edildi; milyonlarca satırda bile `O(1)` anlık tepki süresi sağlandı.
+    * **Odak Yönetimi**: Header etkileşimleri sırasında grid odağının (focus) kaybolması engellendi.
 * **[YENİ] Tam Tema Desteği (v1.1.5)**:
     * **SetTheme(bool isDarkMode) API**: Arama kutusu, liste ve butonlar dahil tüm filtre menüsünü uygulama temasına (Koyu/Açık) entegre eden yeni API eklendi.
     * **DuckDB Uyumluluğu**: `Convert` fonksiyonu sözdizimi DuckDB uyumluluğu için düzeltildi.

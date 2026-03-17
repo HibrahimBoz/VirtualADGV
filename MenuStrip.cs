@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Advanced DataGridView
 //
 // Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
@@ -685,7 +685,23 @@ namespace Zuby.ADGV
                         TreeNodeItemSelector selectAllNode = TreeNodeItemSelector.CreateNode(AdvancedDataGridView.Translations[AdvancedDataGridView.TranslationKey.ADGVNodeSelectAll.ToString()], null, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.SelectAll);
                         _loadedNodes = _loadedNodes.Concat(new TreeNodeItemSelector[] { selectAllNode }).ToArray();
 
-                        foreach (var kvp in result.OrderBy(x => x.Key))
+                        var sortedResult = result.AsEnumerable();
+                        if (DataType == typeof(Int32) || DataType == typeof(Int64) || DataType == typeof(Int16) ||
+                            DataType == typeof(UInt32) || DataType == typeof(UInt64) || DataType == typeof(UInt16) ||
+                            DataType == typeof(Byte) || DataType == typeof(SByte) || DataType == typeof(Decimal) ||
+                            DataType == typeof(Single) || DataType == typeof(Double))
+                        {
+                            sortedResult = result.OrderBy(x => {
+                                decimal val;
+                                return decimal.TryParse(x.Key, out val) ? val : decimal.MaxValue;
+                            });
+                        }
+                        else
+                        {
+                            sortedResult = result.OrderBy(x => x.Key);
+                        }
+
+                        foreach (var kvp in sortedResult)
                         {
                             string text = $"{kvp.Key} ({kvp.Value})";
                             TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(text, kvp.Key, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.Default);
@@ -1297,7 +1313,20 @@ namespace Zuby.ADGV
                         if (dataGridView != null && !String.IsNullOrEmpty(columnName))
                             nodeFont = dataGridView.Columns[columnName].DefaultCellStyle.Font;
 
-                        foreach (var v in nonulls.GroupBy(c => c.Value).OrderBy(g => g.Key))
+                        IEnumerable<IGrouping<object, DataGridViewCell>> sorted;
+                        if (DataType == typeof(Int32) || DataType == typeof(Int64) || DataType == typeof(Int16) ||
+                            DataType == typeof(UInt32) || DataType == typeof(UInt64) || DataType == typeof(UInt16) ||
+                            DataType == typeof(Byte) || DataType == typeof(SByte) || DataType == typeof(Decimal) ||
+                            DataType == typeof(Single) || DataType == typeof(Double))
+                        {
+                            sorted = nonulls.GroupBy(c => c.Value).OrderBy(g => Convert.ToDecimal(g.Key));
+                        }
+                        else
+                        {
+                            sorted = nonulls.GroupBy(c => c.Value).OrderBy(g => g.Key);
+                        }
+
+                        foreach (var v in sorted)
                         {
                             TreeNodeItemSelector node = TreeNodeItemSelector.CreateNode(v.First().FormattedValue.ToString(), v.Key, CheckState.Checked, TreeNodeItemSelector.CustomNodeType.Default);
                             if (nodeFont != null)

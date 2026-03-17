@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Advanced DataGridView
 //
 // Copyright (c), 2014 Davide Gironi <davide.gironi@gmail.com>
@@ -1609,6 +1609,33 @@ namespace Zuby.ADGV
 
         #endregion
 
+        /// <summary>
+        /// Selects all cells. Promotes to Virtual Selection if VirtualModeSelectionEnabled is true.
+        public new void SelectAll()
+        {
+            if (VirtualModeSelectionEnabled)
+            {
+                VirtualSelectAll();
+            }
+            else
+            {
+                base.SelectAll();
+            }
+        }
+
+        /// <summary>
+        /// Global key handling for the control.
+        /// </summary>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (VirtualModeSelectionEnabled && keyData == (Keys.Control | Keys.A))
+            {
+                VirtualSelectAll();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         #region Virtual Selection Public Methods
 
         /// <summary>
@@ -1855,8 +1882,15 @@ namespace Zuby.ADGV
             if (VirtualModeSelectionEnabled)
             {
                 var hit = HitTest(e.X, e.Y);
-                if (hit.Type == DataGridViewHitTestType.Cell || hit.Type == DataGridViewHitTestType.RowHeader)
+                if (hit.Type == DataGridViewHitTestType.Cell || hit.Type == DataGridViewHitTestType.RowHeader || hit.Type == DataGridViewHitTestType.TopLeftHeader)
                 {
+                    if (hit.Type == DataGridViewHitTestType.TopLeftHeader)
+                    {
+                        Focus();
+                        VirtualSelectAll();
+                        return;
+                    }
+
                     Keys modifiers = Control.ModifierKeys;
                     bool isShift = (modifiers & Keys.Shift) == Keys.Shift;
                     bool isCtrl = (modifiers & Keys.Control) == Keys.Control;

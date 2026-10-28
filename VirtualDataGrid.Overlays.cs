@@ -92,7 +92,7 @@ public partial class VirtualDataGrid
         Array.Sort(copy);
         return copy;
     }
-    private static bool ValidDimension(object value) => value is double d && double.IsFinite(d) && d > 0;
+    private static bool ValidDimension(object value) => value is double d && Compat.IsFinite(d) && d > 0;
     private static void OverlayOptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var grid = (VirtualDataGrid)d;
@@ -128,6 +128,7 @@ public partial class VirtualDataGrid
         Minimap = new MinimapAdorner(this, presenter, viewer);
         layer.Add(Crosshair);
         layer.Add(Minimap);
+        AttachWindowScroll(layer, presenter, viewer);
         viewer.ScrollChanged += OnOverlayScroll;
         LayoutUpdated += OnOverlayLayout;
         QueueSelection();
@@ -140,6 +141,7 @@ public partial class VirtualDataGrid
         if (OverlayScrollViewer != null) OverlayScrollViewer.ScrollChanged -= OnOverlayScroll;
         if (Crosshair != null) _overlayLayer?.Remove(Crosshair);
         if (Minimap != null) { Minimap.Dispose(); _overlayLayer?.Remove(Minimap); }
+        DetachWindowScroll();
         Crosshair = null;
         Minimap = null;
         _overlayLayer = null;
@@ -150,6 +152,7 @@ public partial class VirtualDataGrid
     {
         Crosshair?.RefreshGeometry();
         Minimap?.RefreshGeometry();
+        OnWindowScroll();
     }
     private bool _overlayLayoutQueued;
     private void OnOverlayLayout(object? sender, EventArgs e)
@@ -169,6 +172,7 @@ public partial class VirtualDataGrid
     protected override void OnSelectedCellsChanged(SelectedCellsChangedEventArgs e)
     {
         base.OnSelectedCellsChanged(e);
+        OnWindowSelectionChanged();
         _selectionCleared = false;
         QueueSelection();
     }

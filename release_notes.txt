@@ -1,3 +1,19 @@
+Sürüm: 1.2.0 (Veri Kaynağı Sözleşmesi, 64 Bit Satır Sırası, .NET Framework 4.6.2)
+Tarih: 28 Ekim 2026
+
+* Paket iki hedefle derlenir: net8.0-windows ve net462 (.NET Framework 4.6.2). Ek bağımlılık yoktur.
+  4.6.2'de olmayan küçük API'lerin karşılığı Compat sınıfındadır; değer çifti (ValueTuple) kullanılmaz.
+* VirtualADGV.Data ad alanı: IVirtualTableSource (64 bit satır sayısı ve sırası, eşzamansız sayfa, anahtar → sıra,
+  arama, SeekAsync) ve IVirtualRelationSource (satırdan alt kaynağa inme). Tipler WPF taşımaz.
+* VirtualSourceList: kaynağı DataGrid'in IList'ine çevirir. Sayfa SyncWait (250 ms) içinde gelirse beklenir;
+  gelmezse yer tutucu satır döner, sayfa gelince satır INotifyPropertyChanged ile dolar. Okuma hatası istisna fırlatmaz.
+* Pencereli kip: kaynak int.MaxValue satırı aşınca DataGrid'e 1.000.000 satırlık pencere verilir. Sağda 64 bit
+  kaydırma çubuğu durur, pencere kenara yaklaşınca kayar; seçim görsel sıraya göre korunur. Bu kipte mini harita gizlidir.
+  Yeni API: ScrollToOrdinal(long), FirstVisibleOrdinal, IsWindowedSource.
+* Pencereli olmayan tablolarda görsel ağaç ve çizim 1.1.0 ile aynıdır (ekran görüntüleri piksel piksel karşılaştırıldı).
+
+----------------------------------------------------------------------
+
 Sürüm: 1.1.0 (Çapraz Vurgu, Mini Harita ve Bellek İçi Arama)
 Tarih: 28 Ekim 2026
 

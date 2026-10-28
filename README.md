@@ -6,6 +6,14 @@ An advanced, high-performance WPF DataGrid control with Excel-like filtering, so
 
 ---
 
+## What's new in 1.2.0
+
+- **.NET Framework 4.6.2** — the package now ships `net462` next to `net8.0-windows`. No extra dependencies.
+- **Data source contract** (`VirtualADGV.Data`, no WPF types) — `IVirtualTableSource`: 64-bit row count and ordinals, async pages, row key → ordinal, search (forward and backward), `SeekAsync` for approximate positions of remote sources, `CountChanged`. `IVirtualRelationSource`: drill down from a row to its own child source (e.g., a report row → its detail table).
+- **`VirtualSourceList`** — turns any `IVirtualTableSource` into the `IList` the grid needs. A page that arrives within `SyncWait` (250 ms) is shown directly, so a fast local source looks exactly as before. A slow (remote) page shows placeholder rows that fill in when the page arrives; the UI never waits more than once per page. A failing page never throws into the grid.
+- **More than 2,147,483,647 rows** — WPF counts rows with `int`. Above that, the grid gets a 1,000,000-row window of the source and a 64-bit scroll bar over its own vertical scroll bar. The window moves as you approach its edge; the selection is kept by ordinal. New API: `ScrollToOrdinal(long)`, `FirstVisibleOrdinal`, `IsWindowedSource`. In this mode the minimap is hidden.
+- **Existing grids are unchanged:** below the threshold nothing is added to the visual tree; screenshots were compared pixel by pixel against 1.1.0.
+
 ## What's new in 1.1.0
 
 - **Crosshair highlight** — when a cell is selected, its whole row and whole column are tinted with a faint color across the grid.
@@ -70,13 +78,13 @@ An advanced, high-performance WPF DataGrid control with Excel-like filtering, so
 ## Installation
 
 ```bash
-dotnet add package VirtualADGV.WPF --version 1.1.0
+dotnet add package VirtualADGV.WPF --version 1.2.0
 ```
 
 Or in your project file:
 
 ```xml
-<PackageReference Include="VirtualADGV.WPF" Version="1.1.0" />
+<PackageReference Include="VirtualADGV.WPF" Version="1.2.0" />
 ```
 
 ---
@@ -197,6 +205,24 @@ MyGrid.Strings.MinimapRowFormat       = "Satır: {0:N0}";
 | `UpdateSearchColumns()` | method | Refresh the search column dropdown |
 | `SetColumnFilterEnabled(int, bool)` | method | Enable/disable filter per column |
 | `SetColumnSortEnabled(int, bool)` | method | Enable/disable sort per column |
+| `ScrollToOrdinal(long)` (1.2.0) | method | Scroll to a 64-bit ordinal; moves the window if needed |
+| `FirstVisibleOrdinal` (1.2.0) | `long` | Ordinal of the first visible row (−1 if none) |
+| `IsWindowedSource` (1.2.0) | `bool` | `ItemsSource` is a `VirtualSourceList` above its window threshold |
+
+### `VirtualADGV.Data` (1.2.0)
+
+| Type | Description |
+|------|-------------|
+| `IVirtualTableSource` | `Count`, `IsCountExact`, `CountChanged`, `SupportsExactOrdinals`, `Columns`, `GetPageAsync`, `GetOrdinalsAsync`, `FindAsync`, `SeekAsync`, `Dispose` |
+| `IVirtualRelationSource` | `Relations`, `GetChildSourceAsync(rowKey, relation)` |
+| `VirtualSourceList` | `IList` + `ITypedList` adapter; options: `PageSize` (2,000), `MaxCachedPages` (64), `SyncWait` (250 ms), `WindowThreshold` (`int.MaxValue`), `WindowSize` (1,000,000) |
+| `IVirtualRow` / `VirtualSourceRow` | Row with `Ordinal`, `Key`, `IsLoaded` and a by-name indexer; raises `PropertyChanged` when a placeholder fills in |
+
+```csharp
+var list = new VirtualSourceList(mySource);   // mySource : IVirtualTableSource
+grid.ItemsSource = list;
+grid.ScrollToOrdinal(12_345_678_901);          // windowed mode above int.MaxValue rows
+```
 
 ### `GridSearch` (static)
 
@@ -242,7 +268,7 @@ The control reads these brushes with `DynamicResource` / `TryFindResource`. Defi
 
 ## Requirements
 
-- .NET 8.0 (Windows), WPF
+- .NET 8.0 (Windows) or .NET Framework 4.6.2+, WPF
 - `ItemsSource` as `System.Data.DataView` enables automatic column type detection in the filter popup
 - The overlays need an `AdornerLayer` (any `Window` provides one)
 
@@ -261,6 +287,14 @@ MIT
 Büyük veri setleri (1M+ satır) için Excel benzeri filtreleme, sıralama, arama, çapraz vurgu, VS Code tarzı mini harita ve tam koyu/açık tema desteği sunan gelişmiş WPF DataGrid kontrolü.
 
 ---
+
+## 1.2.0'da yenilikler
+
+- **.NET Framework 4.6.2** — paket artık `net8.0-windows` yanında `net462` de taşır. Ek bağımlılık yoktur.
+- **Veri kaynağı sözleşmesi** (`VirtualADGV.Data`, WPF tipi yok) — `IVirtualTableSource`: 64 bit satır sayısı ve sırası, eşzamansız sayfa, satır anahtarı → sıra, arama (ileri ve geri), uzak kaynağın yaklaşık konumu için `SeekAsync`, `CountChanged`. `IVirtualRelationSource`: bir satırdan kendi alt kaynağına inme (ör. rapor satırı → ayrıntı tablosu).
+- **`VirtualSourceList`** — her `IVirtualTableSource`'u tablonun beklediği `IList`'e çevirir. `SyncWait` (250 ms) içinde gelen sayfa doğrudan gösterilir; hızlı yerel kaynak eskisi gibi görünür. Yavaş (uzak) sayfada yer tutucu satır görünür, sayfa gelince dolar; arayüz bir sayfa için en çok bir kez bekler. Okunamayan sayfa tabloya istisna fırlatmaz.
+- **2.147.483.647 satırdan fazlası** — WPF satırları `int` ile sayar. Bu sayının üstünde tablo kaynağın 1.000.000 satırlık bir penceresini görür; kendi dikey çubuğunun üstünde 64 bit kaydırma çubuğu durur. Pencere kenara yaklaşınca kayar; seçim görsel sıraya göre korunur. Yeni API: `ScrollToOrdinal(long)`, `FirstVisibleOrdinal`, `IsWindowedSource`. Bu kipte mini harita gizlidir.
+- **Var olan tablolar değişmez:** eşiğin altında görsel ağaca hiçbir şey eklenmez; ekran görüntüleri 1.1.0 ile piksel piksel karşılaştırıldı.
 
 ## 1.1.0'da yenilikler
 
@@ -282,7 +316,7 @@ Büyük veri setleri (1M+ satır) için Excel benzeri filtreleme, sıralama, ara
 ## Kurulum
 
 ```bash
-dotnet add package VirtualADGV.WPF --version 1.1.0
+dotnet add package VirtualADGV.WPF --version 1.2.0
 ```
 
 ## Kullanım

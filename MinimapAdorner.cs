@@ -48,7 +48,8 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     internal void RefreshGeometry()
     {
         var size = AdornedElement.RenderSize;
-        bool shown = _grid.IsMinimapVisible && _viewer.ComputedVerticalScrollBarVisibility == Visibility.Visible &&
+        // Pencereli kipte (kaynak > int.MaxValue) DataGrid kaynağın yalnız bir penceresini görür; konumu 64 bit kaydırma çubuğu gösterir.
+        bool shown = _grid.IsMinimapVisible && !_grid.IsWindowedSource && _viewer.ComputedVerticalScrollBarVisibility == Visibility.Visible &&
             size.Width > 8 && size.Height > 8 && _grid.Items.Count > 0;
         Visibility = shown ? Visibility.Visible : Visibility.Collapsed;
         Rect bounds = shown ? new Rect(Math.Max(4, size.Width - _grid.MinimapWidth - 4), 4,
@@ -67,13 +68,13 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     {
         if (MapBounds.IsEmpty || _viewer.ExtentHeight <= 0) return Rect.Empty;
         double height = Math.Min(MapBounds.Height, Math.Max(6, _viewer.ViewportHeight / _viewer.ExtentHeight * MapBounds.Height));
-        double top = Math.Clamp(offset / _viewer.ExtentHeight * MapBounds.Height, 0, MapBounds.Height - height);
+        double top = Compat.Clamp(offset / _viewer.ExtentHeight * MapBounds.Height, 0, MapBounds.Height - height);
         return new Rect(MapBounds.X, MapBounds.Y + top, MapBounds.Width, height);
     }
     internal static long[] Bucketize(IReadOnlyList<long> ordinals, int total, int height)
     {
         var buckets = new long[height];
-        Array.Fill(buckets, -1L);
+        Compat.Fill(buckets, -1L);
         if (total <= 0 || height == 0) return buckets;
         for (int i = 0; i < ordinals.Count; i++)
         {
@@ -145,10 +146,10 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     {
         if (MapBounds.IsEmpty || MapBounds.Height <= 0) return 0;   // 0'a bölme NaN üretip ScrollToVerticalOffset'e giderdi
         EnsureBuckets();
-        double ratio = Math.Clamp((y - MapBounds.Y) / MapBounds.Height, 0, 1);
+        double ratio = Compat.Clamp((y - MapBounds.Y) / MapBounds.Height, 0, 1);
         if (snap)
         {
-            int bucket = Math.Clamp((int)(ratio * _bucketCount), 0, Math.Max(0, _bucketCount - 1));
+            int bucket = Compat.Clamp((int)(ratio * _bucketCount), 0, Math.Max(0, _bucketCount - 1));
             // En yakın dolu kova; eşit uzaklıkta üstteki ilk sıra kazanır.
             for (int distance = 0; distance <= 2; distance++)
                 foreach (int index in distance == 0 ? new[] { bucket } : new[] { bucket - distance, bucket + distance })
@@ -157,7 +158,7 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         }
         return ratio;
     }
-    internal double TargetOffset(double ratio) => Math.Clamp(ratio * _viewer.ExtentHeight - _viewer.ViewportHeight / 2,
+    internal double TargetOffset(double ratio) => Compat.Clamp(ratio * _viewer.ExtentHeight - _viewer.ViewportHeight / 2,
         0, Math.Max(0, _viewer.ExtentHeight - _viewer.ViewportHeight));
     internal void ClickAt(double y)
     {

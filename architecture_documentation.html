@@ -35,12 +35,20 @@
     </div>
 
     <div class="card">
-        <h2>Yeni Özellikler (v1.0.0)</h2>
+        <h2>Sürüm Geçmişi (güncel: v1.0.3)</h2>
+        <p><strong>v1.0.3 — Kademeli (cascading) filtre:</strong> <code>LoadingFilterEventArgs.EnabledValues</code>
+        (<code>ISet&lt;string&gt;?</code>) eklendi; diğer sütunların aktif filtreleri altında artık var olmayan
+        değerler filtre popup'ında <em>disabled</em> (gri, seçilemez) gösterilir ve "Tümünü Seç"ten hariç tutulur.
+        <code>null</code> bırakılırsa tüm değerler etkin kalır (geriye dönük uyumlu). Aktif filtresi olan sütun
+        yeniden açıldığında değerlerin işaretsiz gelmesi hatası da bu sürümde düzeltildi.</p>
+        <p><strong>v1.0.0 — NuGet hazırlığı:</strong></p>
         <ul>
             <li><strong>Lokalizasyon Sistemi:</strong> <code>VirtualDataGridStrings</code> üzerinden tüm UI metinlerine tam erişim ve dinamik dil değiştirme desteği.</li>
             <li><strong>Bağımsızlık:</strong> Harici tema kaynaklarına bağımlılıklar (Converter'lar vb.) temizlenerek kütüphanenin herhangi bir WPF projesine kolayca entegre edilmesi sağlandı.</li>
             <li><strong>Dokümantasyon:</strong> Tüm API'ler için XML Summary desteği ve IntelliSense uyumluluğu.</li>
         </ul>
+        <p><em>Tam API referansı ve kullanım örnekleri için kanonik kaynak <code>README.md</code>'dir
+        (pakete dahil, EN + TR).</em></p>
     </div>
 
     <div class="card">
@@ -65,7 +73,7 @@
     </div>
 
     <footer style="margin-top: 50px; font-size: 0.8em; color: #666;">
-        Doküman Antigravity tarafından otomatik olarak oluşturulmuştur.
+        Mimari özet — v1.0.3 kod tabanına göre doğrulandı (31 Temmuz 2026).
     </footer>
 </body>
 </html>

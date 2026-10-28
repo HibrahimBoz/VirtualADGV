@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("VirtualAdgvTests")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, // nerede temaya özgü kaynak sözlükleri bulunur

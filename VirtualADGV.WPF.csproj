@@ -7,7 +7,7 @@
     
     <!-- NuGet Metadata -->
     <PackageId>VirtualADGV.WPF</PackageId>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
     <Authors>HibrahimBoz</Authors>
     <Description>Advanced virtual DataGrid for WPF with filtering, sorting, search and theming support.</Description>
     <PackageTags>wpf;datagrid;filter;sort;search;darkmode;excel;excel-filter;virtual;virtualization;sql-filter;grid;advanced-datagrid;datatable;wpf-controls;localization;theme</PackageTags>
@@ -16,6 +16,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/HibrahimBoz/VirtualADGV.WPF</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReleaseNotes>1.1.0: crosshair highlight (selected cell's row and column), VS Code-style minimap (marks, selection, search hits; click/drag to scroll; works on 1M+ row virtual sources), built-in in-memory Ctrl+F search, theme keys ThemeCrosshairBg / ThemeSearchHitBg. Fixes: filler-header filter button exception, corner button layout loop, Items.Refresh on Ctrl+A.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

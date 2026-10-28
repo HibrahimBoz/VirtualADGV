@@ -37,6 +37,18 @@ namespace VirtualADGV.WPF
         /// <summary>Label for the find reset/start over button.</summary>
         public string FindReset { get; set; } = "Restart Search";
 
+        /// <summary>Arama eşleşmesi bulunamadığında gösterilen metin.</summary>
+        public string SearchNoMatch { get; set; } = "No matches found.";
+
+        /// <summary>Arama tablo sonuna ulaştığında gösterilen metin.</summary>
+        public string SearchEndReached { get; set; } = "No matches found (end of table reached; use Restart Search).";
+
+        /// <summary>Toplam arama eşleşmesi sayısının biçimi.</summary>
+        public string SearchMatchCountFormat { get; set; } = "{0:N0} matches";
+
+        /// <summary>Mini harita sürükleme ipucunun satır biçimi.</summary>
+        public string MinimapRowFormat { get; set; } = "Row: {0:N0}";
+
         // ── Filter popup — sort buttons ───────────────────────────
         /// <summary>Sort ascending label for text columns (A → Z).</summary>
         public string SortAToZ { get; set; } = "Sort A to Z";

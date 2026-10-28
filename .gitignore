@@ -11,3 +11,6 @@ obj/
 # Packages
 nupkg/
 *.nupkg
+
+# WPF gecici derleme projeleri
+*_wpftmp.csproj

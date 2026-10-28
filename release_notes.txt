@@ -1,3 +1,18 @@
+Sürüm: 1.1.0 (Çapraz Vurgu, Mini Harita ve Bellek İçi Arama)
+Tarih: 28 Ekim 2026
+
+* Seçili hücrelerin satır ve sütunları ayrı, saydam Adorner katmanında vurgulanır.
+  Sütun konumu yatay kaydırmayı ve donmuş sütunları izler; veri sıfırlanınca vurgu temizlenir.
+* Sağ üst mini harita altın sarısı işaretleri, seçili satırları, arama eşleşmelerini ve görünüm çerçevesini gösterir.
+  Görsel sıralar SetMinimapMarks / SetMinimapSearchHits ile gönderilir; OrdinalResolver seçili satırı çözer.
+  Çizim piksel kovaları kullanır. Tık merkezler; sürükleme 100 ms bekler veya fare bırakılınca kaydırır.
+* SearchRequested abonesi yoksa desteklenen bellek içi kaynaklarda Ctrl+F araması çalışır (en çok 200.000 satır).
+  Eşleşmeler mini haritaya aktarılır; durum arama çubuğunda gösterilir. Modal pencere açılmaz.
+* Ctrl+A ve sütun vurgusu Items.Refresh çağırmaz. Köşe düğmesi genişliği RowHeaderActualWidth değerine bağlandı.
+* Paketsiz VirtualAdgvTests konsol koşumu; açık/koyu tema görüntüleri ve milyon satır çizim ölçümü eklendi.
+
+----------------------------------------------------------------------
+
 VirtualADGV.WPF - Sürüm Notları (Release Notes)
 ===========================================
 

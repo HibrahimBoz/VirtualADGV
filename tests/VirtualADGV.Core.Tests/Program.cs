@@ -22,6 +22,7 @@ internal static class Program
             Search();
             Selection();
             Pages();
+            Prefetch();
             ForwardingAndMetadata();
         }
         catch (Exception ex) { Check("unexpected exception: " + ex, false); }
@@ -235,6 +236,35 @@ internal static class Program
         finally { SynchronizationContext.SetSynchronizationContext(previous); }
     }
 
+    private static void Prefetch()
+    {
+        var previous = SynchronizationContext.Current;
+        SynchronizationContext.SetSynchronizationContext(null);
+        try
+        {
+            using var source = new FakeSource();
+            using var list = new VirtualSourceList(source, new VirtualSourceListOptions { PageSize = 1, SyncWait = TimeSpan.Zero });
+            using var cancel = new CancellationTokenSource();
+            var cancelled = list.PrefetchAsync(0L, 1, cancel.Token);
+            cancel.Cancel();
+            try { cancelled.GetAwaiter().GetResult(); Check("prefetch cancellation", false); }
+            catch (OperationCanceledException) { Check("prefetch cancellation", true); }
+            var ready = list.PrefetchAsync(0L, 1, CancellationToken.None);
+            Check("prefetch remains asynchronous", !ready.IsCompleted);
+            source.Complete();
+            ready.GetAwaiter().GetResult();
+            Check("prefetch publishes cache before returning", list.GetRow(0).IsLoaded);
+            Check("prefetch does not move window", list.WindowStart == 0);
+            Check("prefetch empty range", list.PrefetchAsync(long.MaxValue, 1, CancellationToken.None).IsCompleted);
+            Check("prefetch interface", list is IVirtualPrefetchList);
+            try { list.PrefetchAsync(-1L, 1, CancellationToken.None).GetAwaiter().GetResult(); Check("prefetch validates ordinal", false); }
+            catch (ArgumentOutOfRangeException) { Check("prefetch validates ordinal", true); }
+            var tr = VirtualGridTexts.CreateTurkish();
+            Check("Turkish defaults are opt-in", tr.SearchLabel == "Ara:" && new VirtualGridTexts().SearchLabel == "Search:");
+        }
+        finally { SynchronizationContext.SetSynchronizationContext(previous); }
+    }
+
     private sealed class QueuedContext : SynchronizationContext
     {
         private readonly ConcurrentQueue<Action> _callbacks = new();
@@ -274,6 +304,8 @@ internal static class Program
         Check("Core references no UI assembly", core.GetReferencedAssemblies().All(a => a.Name != "PresentationFramework" && a.Name != "PresentationCore" && a.Name != "WindowsBase" && a.Name != "System.Windows.Forms"));
         var defaults = new VirtualGridTexts();
         var wpfTexts = Activator.CreateInstance(wpf.GetType("VirtualADGV.WPF.VirtualDataGridStrings", true)!);
-        Check("shared text defaults unchanged", typeof(VirtualGridTexts).GetProperties().All(p => Equals(p.GetValue(defaults), wpfTexts!.GetType().GetProperty(p.Name)!.GetValue(wpfTexts))));
+        // Yalnız WPF'te de bulunan metinler karşılaştırılır; WinForms'a özgü yeni metinlerin WPF karşılığı yoktur.
+        var shared = typeof(VirtualGridTexts).GetProperties().Where(p => wpfTexts!.GetType().GetProperty(p.Name) != null).ToArray();
+        Check("shared text defaults unchanged", shared.Length >= 10 && shared.All(p => Equals(p.GetValue(defaults), wpfTexts!.GetType().GetProperty(p.Name)!.GetValue(wpfTexts))));
     }
 }

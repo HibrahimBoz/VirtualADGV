@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <OutputType>Library</OutputType>
     <RootNamespace>Zuby.ADGV</RootNamespace>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -9,16 +10,16 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyName>AdvancedDataGridView</AssemblyName>
-    <Version>1.2.1</Version>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <FileVersion>1.2.1</FileVersion>
-    <PackageVersion>1.2.1</PackageVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <Title>Virtual ADGV</Title>
     <Description>.NET WinForms DataGridView with advanced Filtering and Sorting capabilities - Enhanced Fork with Virtual Mode Support and High-Performance Selection Logic.</Description>
     <PackageReleaseNotes>v1.2.1: New package icon. v1.2.0: Fixed upstream issue #176 (checklist emptied after pressing Cancel twice when RemoveNodesOnSearch is off). Added checklist selection counter ("Items {0} / {1}", Turkish default "Öğe {0} / {1}"), hidden while values are loading. MenuStrip.Show(Control, int, int, bool) is now [Obsolete]; use Show(Control, int, int). Both changes ported from davidegironi/advanceddatagridview (6efd3b4, af24397).</PackageReleaseNotes>
     <Product>Virtual ADGV</Product>
     <Authors>Davide Gironi (Original), Halil İbrahim Bozoğlu (Virtual Support)</Authors>
-    <Company>RecordAnalyzer</Company>
+    <Company>VirtualADGV</Company>
     <RepositoryUrl>https://github.com/HibrahimBoz/VirtualADGV</RepositoryUrl>
     <PackageId>VirtualADGV</PackageId>
     <PackageTags>DataGridView, WinForms, Advanced, Enhanced, Table, Grid, Filter, Sort, VirtualMode</PackageTags>
@@ -32,6 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../VirtualADGV.Core/VirtualADGV.Core.csproj" />
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="LICENSE" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />

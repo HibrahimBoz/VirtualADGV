@@ -26,7 +26,7 @@ namespace Zuby.ADGV
 {
 
     [System.ComponentModel.DesignerCategory("")]
-    public class AdvancedDataGridView : DataGridView
+    public partial class AdvancedDataGridView : DataGridView
     {
 
         #region public enum
@@ -135,7 +135,11 @@ namespace Zuby.ADGV
             ADGVButtonCancel,
             ADGVTextFilters,
             ADGVNumberFilters,
-            ADGVDateFilters
+            ADGVDateFilters,
+            ADGVAllColumns, ADGVSearchPlaceholder, ADGVSearchLabel, ADGVColumnLabel, ADGVCaseSensitive,
+            ADGVFindNext, ADGVFindPrevious, ADGVFindReset, ADGVCloseSearch, ADGVSearchNoMatch,
+            ADGVSearchEndReached, ADGVSearchMatchCountFormat, ADGVMinimapRowFormat, ADGVSearchLoading,
+            ADGVSearchLimitExceeded, ADGVSearchErrorFormat, ADGVSourceFilterUnavailable
         }
 
         /// <summary>
@@ -190,7 +194,24 @@ namespace Zuby.ADGV
             { TranslationKey.ADGVTextFilters.ToString(), "Metin Filtreleri" },
             { TranslationKey.ADGVNumberFilters.ToString(), "Sayı Filtreleri" },
             { TranslationKey.ADGVDateFilters.ToString(), "Tarih Filtreleri" },
-            { TranslationKey.ADGVAddCustomFilter.ToString(), "Özel Filtre..." }
+            { TranslationKey.ADGVAddCustomFilter.ToString(), "Özel Filtre..." },
+            { TranslationKey.ADGVAllColumns.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().AllColumns },
+            { TranslationKey.ADGVSearchPlaceholder.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchPlaceholder },
+            { TranslationKey.ADGVSearchLabel.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchLabel },
+            { TranslationKey.ADGVColumnLabel.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().ColumnLabel },
+            { TranslationKey.ADGVCaseSensitive.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().CaseSensitive },
+            { TranslationKey.ADGVFindNext.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().FindNext },
+            { TranslationKey.ADGVFindPrevious.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().FindPrevious },
+            { TranslationKey.ADGVFindReset.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().FindReset },
+            { TranslationKey.ADGVCloseSearch.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().CloseSearch },
+            { TranslationKey.ADGVSearchNoMatch.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchNoMatch },
+            { TranslationKey.ADGVSearchEndReached.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchEndReached },
+            { TranslationKey.ADGVSearchMatchCountFormat.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchMatchCountFormat },
+            { TranslationKey.ADGVMinimapRowFormat.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().MinimapRowFormat },
+            { TranslationKey.ADGVSearchLoading.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchLoading },
+            { TranslationKey.ADGVSearchLimitExceeded.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchLimitExceeded },
+            { TranslationKey.ADGVSearchErrorFormat.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SearchErrorFormat },
+            { TranslationKey.ADGVSourceFilterUnavailable.ToString(), VirtualADGV.Grid.VirtualGridTexts.CreateTurkish().SourceFilterUnavailable }
         };
 
         #endregion
@@ -249,6 +270,7 @@ namespace Zuby.ADGV
         public AdvancedDataGridView()
         {
             RightToLeft = RightToLeft.No;
+            InitializeOverlays();
         }
 
         /// <summary>
@@ -282,11 +304,12 @@ namespace Zuby.ADGV
         /// <param name="e"></param>
         protected override void OnDataSourceChanged(EventArgs e)
         {
+            ResetGridFeatures();
             //dispose unactive menustrips
             foreach (DataGridViewColumn column in Columns)
             {
                 ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                _menuStripToDispose = _menuStripToDispose.Where(f => f != cell.MenuStrip).ToList();
+                if (cell != null) _menuStripToDispose = _menuStripToDispose.Where(f => f != cell.MenuStrip).ToList();
             }
             foreach (MenuStrip menustrip in _menuStripToDispose)
             {
@@ -298,7 +321,7 @@ namespace Zuby.ADGV
             foreach (DataGridViewColumn column in Columns)
             {
                 ColumnHeaderCell cell = column.HeaderCell as ColumnHeaderCell;
-                cell.MenuStrip.SetDataType(column.ValueType);
+                if (cell != null) cell.MenuStrip.SetDataType(column.ValueType);
             }
 
             base.OnDataSourceChanged(e);
@@ -392,6 +415,7 @@ namespace Zuby.ADGV
         /// <param name="isDarkMode"></param>
         public void SetTheme(bool isDarkMode)
         {
+            ApplyOverlayTheme(isDarkMode);
             foreach (ColumnHeaderCell c in FilterableCells)
             {
                 if (c.MenuStrip != null)
@@ -1248,6 +1272,13 @@ namespace Zuby.ADGV
         /// <returns></returns>
         public DataGridViewCell FindCell(string valueToFind, string columnName, int rowIndex, int columnIndex, bool isWholeWordSearch, bool isCaseSensitive)
         {
+            // The legacy synchronous API cannot wait on a remote source on the UI thread.
+            // It starts the same asynchronous search as the toolbar and returns no immediate cell.
+            if (IsVirtualSource)
+            {
+                StartSourceFind(valueToFind, columnName, rowIndex, isCaseSensitive);
+                return null;
+            }
             if (valueToFind != null && RowCount > 0 && ColumnCount > 0 && (columnName == null || (Columns.Contains(columnName) && Columns[columnName].Visible)))
             {
                 rowIndex = Math.Max(0, rowIndex);
@@ -1391,6 +1422,7 @@ namespace Zuby.ADGV
             if (ColumnHeadersHeight < cell.MinimumSize.Height)
                 ColumnHeadersHeight = cell.MinimumSize.Height;
             e.Column.HeaderCell = cell;
+            cell.MenuStrip.SetTheme(_overlayDark);
 
             base.OnColumnAdded(e);
         }
@@ -1630,6 +1662,11 @@ namespace Zuby.ADGV
         /// </summary>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                OpenSearch();
+                return true;
+            }
             if (VirtualModeSelectionEnabled && keyData == (Keys.Control | Keys.A))
             {
                 VirtualSelectAll();
@@ -1688,6 +1725,7 @@ namespace Zuby.ADGV
                 _virtualSelectedRows.Add(rowIndex);
             else
                 _virtualSelectedRows.Remove(rowIndex);
+            OnVirtualSelectionChanged();
         }
 
         public bool IsVirtualSelectAll => _isAllCellsSelected;
@@ -1826,6 +1864,7 @@ namespace Zuby.ADGV
 
         protected virtual void OnVirtualSelectionChanged()
         {
+            RefreshOverlaySelection();
             VirtualSelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -1854,7 +1893,7 @@ namespace Zuby.ADGV
                 }
             }
 
-            base.OnCellPainting(e);
+            if (!PaintCrosshair(e)) base.OnCellPainting(e);
         }
 
         protected override void OnCellDoubleClick(DataGridViewCellEventArgs e)

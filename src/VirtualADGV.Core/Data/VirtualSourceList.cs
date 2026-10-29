@@ -40,7 +40,7 @@ public sealed class VirtualSourceListOptions
 /// Kaynak <see cref="VirtualSourceListOptions.WindowThreshold"/> satırı aşarsa DataGrid'e kaynağın yalnız bir
 /// penceresi verilir (DataGrid satırları int ile sayar); pencereyi <see cref="MoveWindow"/> kaydırır.
 /// </summary>
-public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChanged, IDisposable
+public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChanged, IVirtualPrefetchList, IDisposable
 {
     private readonly IVirtualTableSource _source;
     private readonly VirtualSourceListOptions _options;
@@ -213,12 +213,48 @@ public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChan
         int count = (int)Math.Min(_options.PageSize, Math.Max(0, _source.Count - start));
         var token = _disposeCts.Token;
         int version = _version;
-        var task = Task.Run(() => _source.GetPageAsync(start, count, token), token);
+        var fetch = Task.Run(() => _source.GetPageAsync(start, count, token), token);
+        // Completion includes cache publication. Awaiting prefetch must guarantee that the
+        // next paint reads the cache, even when the UI notification is still queued.
+        var task = fetch.ContinueWith(t =>
+        {
+            Completed(page, t, version);
+            return t.GetAwaiter().GetResult();
+        }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         _inFlight[page] = task;
-        // Devam iş parçacığı havuzunda koşar: kilit altında, çağıranın iş parçacığında satır doldurulmaz.
-        task.ContinueWith(t => Completed(page, t, version), CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         return task;
     }
+
+    /// <summary>
+    /// Loads an absolute, 64-bit ordinal range before navigation, without creating rows or
+    /// moving the window. Cancellation stops this waiter; shared page requests remain usable.
+    /// </summary>
+    public async Task PrefetchAsync(long start, int count, CancellationToken cancellationToken)
+    {
+        if (start < 0) throw new ArgumentOutOfRangeException(nameof(start));
+        if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+        cancellationToken.ThrowIfCancellationRequested();
+        var tasks = new List<Task>();
+        lock (_lock)
+        {
+            if (_disposed) throw new ObjectDisposedException(nameof(VirtualSourceList));
+            if (count == 0 || start >= TotalCount) return;
+            long last = start + Math.Min((long)count, TotalCount - start) - 1;
+            for (long page = start / _options.PageSize; page <= last / _options.PageSize; page++)
+                if (!_pages.ContainsKey(page)) tasks.Add(PageTask(page));
+        }
+        var completed = Task.WhenAll(tasks);
+        var cancelled = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using (cancellationToken.Register(() => cancelled.TrySetCanceled()))
+        {
+            var winner = await Task.WhenAny(completed, cancelled.Task).ConfigureAwait(false);
+            await winner.ConfigureAwait(false);
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    Task IVirtualPrefetchList.PrefetchAsync(int start, int count, CancellationToken cancellationToken)
+        => PrefetchAsync(WindowStart + start, count, cancellationToken);
 
     private void Completed(long page, Task<VirtualRowPage> task, int version)
     {

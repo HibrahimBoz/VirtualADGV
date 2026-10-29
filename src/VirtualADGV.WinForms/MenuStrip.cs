@@ -640,6 +640,19 @@ namespace Zuby.ADGV
 
             //add nodes
             DataGridView dataGridView = control as DataGridView;
+
+            if (_parentGrid != null && _parentGrid.IsVirtualSource && _parentGrid.FilterAsyncLoadingNeeded == null)
+            {
+                _loadedNodes = new[] { TreeNodeItemSelector.CreateNode(_parentGrid.Strings.SourceFilterUnavailable,
+                    null, CheckState.Indeterminate, TreeNodeItemSelector.CustomNodeType.Default) };
+                _startingNodes = DuplicateNodes(_loadedNodes);
+                _checklistCounterUnavailable = true;
+                ChecklistReloadNodes();
+                button_filter.Enabled = false;
+                base.Show(control, x, y);
+                UpdateChecklistCounter();
+                return;
+            }
             
             if (_parentGrid != null && _parentGrid.FilterAsyncLoadingNeeded != null)
             {
@@ -799,6 +812,8 @@ namespace Zuby.ADGV
         /// <returns></returns>
         public static IEnumerable<DataGridViewCell> GetValuesForFilter(DataGridView grid, string columnName)
         {
+            if (grid is AdvancedDataGridView advanced && advanced.IsVirtualSource)
+                return Enumerable.Empty<DataGridViewCell>();
             var vals =
                 from DataGridViewRow nulls in grid.Rows
                 select nulls.Cells[columnName];
@@ -1812,7 +1827,7 @@ namespace Zuby.ADGV
                 FilterChanged(this, new EventArgs());
 
             // Rebuild checkbox list with filtered values
-            if (_parentGrid != null && !String.IsNullOrEmpty(_columnName))
+            if (_parentGrid != null && !_parentGrid.IsVirtualSource && !String.IsNullOrEmpty(_columnName))
             {
                 // Get filtered values from the grid
                 var filteredVals = GetValuesForFilter(_parentGrid, _columnName);

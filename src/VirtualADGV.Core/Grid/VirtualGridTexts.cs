@@ -25,4 +25,31 @@ public class VirtualGridTexts
     public string SearchMatchCountFormat { get; set; } = "{0:N0} matches";
     /// <summary>Format for a one-based row hint.</summary>
     public string MinimapRowFormat { get; set; } = "Row: {0:N0}";
+    /// <summary>Find previous action.</summary>
+    public string FindPrevious { get; set; } = "Find Previous";
+    /// <summary>Close search action.</summary>
+    public string CloseSearch { get; set; } = "Close";
+    /// <summary>Text while a source search is pending.</summary>
+    public string SearchLoading { get; set; } = "Searching...";
+    /// <summary>In-memory search guard.</summary>
+    public string SearchLimitExceeded { get; set; } = "Use a virtual source to search more than 200,000 rows.";
+    /// <summary>Search failure, with the exception message as argument zero.</summary>
+    public string SearchErrorFormat { get; set; } = "Search failed: {0}";
+    /// <summary>A source checklist needs an asynchronous values provider.</summary>
+    public string SourceFilterUnavailable { get; set; } = "Filter list requires an asynchronous values provider.";
+
+    /// <summary>Turkish defaults for adapters that use Turkish as their default language.</summary>
+    public static VirtualGridTexts CreateTurkish() => new VirtualGridTexts
+    {
+        AllColumns = "Tüm sütunlar", SearchPlaceholder = "Ara...", SearchLabel = "Ara:",
+        ColumnLabel = "Sütun:", CaseSensitive = "Büyük/küçük harf", FindNext = "Sonrakini Bul",
+        FindPrevious = "Öncekini Bul", FindReset = "Baştan Ara", CloseSearch = "Kapat",
+        SearchNoMatch = "Eşleşme bulunamadı.",
+        SearchEndReached = "Eşleşme bulunamadı (tablonun sonuna gelindi; «Baştan Ara» ile yeniden arayın).",
+        SearchMatchCountFormat = "{0:N0} eşleşme", MinimapRowFormat = "Satır: {0:N0}",
+        SearchLoading = "Aranıyor...",
+        SearchLimitExceeded = "200.000 satırdan fazla veri için sanal kaynak araması kullanın.",
+        SearchErrorFormat = "Arama başarısız: {0}",
+        SourceFilterUnavailable = "Filtre listesi için FilterAsyncLoadingNeeded gerekli."
+    };
 }

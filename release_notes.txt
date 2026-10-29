@@ -10,7 +10,21 @@ Tarih: 29 Ekim 2026
   Mini haritanın çizimi ve 100 ms zamanlayıcısı WPF'te kalır; mevcut çizim, arama ve kaydırma davranışı değişmedi.
 * WPF projesi src/VirtualADGV.WPF altına taşındı; Core'a ProjectReference ile bağlanır.
   WPF paketinin bağımlılığı VirtualADGV.Core 2.0.0'dır. Kök çözüm iki konsol test projesini de içerir.
-* WinForms özellikleri ve sürümü bu aşamada değişmedi.
+* VirtualADGV (WinForms) 2.0.0 — WPF'teki yetenekler WinForms'ta, mantık Core'dan:
+  - SetVirtualSource(IVirtualTableSource): VirtualMode + Core sayfa önbelleği; hücre çizimi kaynağı beklemez, sayfa gelince
+    görünür alan tek dikdörtgenle yenilenir. Kaynak 1.000.000 satırı aşınca 100.000 satırlık pencereli kip (64 bit sıra):
+    ScrollToOrdinal(long), FirstVisibleOrdinal, IsWindowedSource. Ölçüldü: WinForms VirtualMode 10 M satırda ~200 MB,
+    50 M satırda ~805 MB yönetilen bellek ayırır; eşik bu yüzden 1 M'dir.
+  - Mini harita (IsMinimapVisible, SetMinimapMarks, SetMinimapSearchHits, OrdinalResolver): sürükleme sırasında tablo kaymaz,
+    100 ms durunca ya da bırakınca önce hedef sayfa yüklenir sonra kaydırılır. Ölçüldü (1 M): sürükleme adımı ort 1,6 ms.
+  - Çapraz vurgu (IsCrosshairEnabled, CrosshairColor): seçili hücrelerin satır ve sütunu seçim renginin saydam karışımıyla.
+  - Ctrl+F: SearchRequested olayı; abone yoksa bağlı kipte bellek içi arama (200.000 satıra kadar, satırları paylaşımdan
+    çıkarmadan), kaynak kipinde IVirtualTableSource.FindAsync. Eşleşmeler mini haritaya.
+  - SetTheme yalnız süzgeç menülerini, mini haritayı ve arama panelini temalar; hücre renkleri değişmez (1.x ile aynı).
+  - Davranış değişikliği: mini harita ve çapraz vurgu 2.0'da varsayılan AÇIK (WPF ile aynı); kapatmak için
+    IsMinimapVisible = false, IsCrosshairEnabled = false. Sanal kaynak kipinde FindCell null döner ve aramayı eşzamansız başlatır.
+  - 1.2.1 davranışları (#176 düzeltmesi, seçim sayacı) korunur. Hedefler net5.0–net8.0-windows; Core netstandard2.0 ile gelir.
+  - Sınama: tests/VirtualADGV.WinForms.Tests 29/29 (1 M ve 3 milyar satırlık kaynak, sürükleme, vurgu pikselleri, arama, #176).
 
 ----------------------------------------------------------------------
 

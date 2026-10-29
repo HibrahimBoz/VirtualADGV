@@ -14,6 +14,16 @@
 * **[NuGet (VirtualADGV)](https://www.nuget.org/packages/VirtualADGV)**
 * **[GitHub Repository](https://github.com/HibrahimBoz/VirtualADGV)**
 
+### 2.0: virtual sources, minimap, crosshair, Ctrl+F
+
+```csharp
+grid.SetVirtualSource(mySource);                 // VirtualADGV.Data.IVirtualTableSource (VirtualADGV.Core)
+grid.SetMinimapMarks(new long[] { 10, 5000 });   // gold marks on the minimap
+grid.IsCrosshairEnabled = true;                  // row + column of the selection are tinted
+await grid.SearchAsync("text");                  // or press Ctrl+F
+grid.ScrollToOrdinal(2_999_999_000);             // 64-bit ordinals (windowed above 1,000,000 rows)
+```
+
 ### Key Features & Improvements
 
 * **[NEW] Numeric Sorting & UI Optimization (v1.1.6)**:
@@ -38,6 +48,11 @@
 
 * **[NuGet (VirtualADGV)](https://www.nuget.org/packages/VirtualADGV)**
 * **[GitHub Deposu](https://github.com/HibrahimBoz/VirtualADGV)**
+
+### 2.0: sanal kaynak, mini harita, çapraz vurgu, Ctrl+F
+
+Kaynak `SetVirtualSource` ile bağlanır; mini harita, çapraz vurgu ve Ctrl+F araması WPF sürümüyle aynı mantığı (VirtualADGV.Core) kullanır.
+1.000.000 satırı aşan kaynakta 100.000 satırlık pencere ve 64 bit sıra kullanılır (`ScrollToOrdinal`, `FirstVisibleOrdinal`).
 
 ### Temel Özellikler ve İyileştirmeler
 

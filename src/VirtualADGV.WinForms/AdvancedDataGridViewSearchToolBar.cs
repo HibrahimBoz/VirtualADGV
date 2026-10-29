@@ -307,6 +307,25 @@ namespace Zuby.ADGV
 
         #region public methods
 
+        private ToolStripLabel _gridSearchStatus;
+
+        /// <summary>Focuses the existing search entry, including when opened by Ctrl+F.</summary>
+        public void FocusSearch()
+        {
+            textBox_search.Focus();
+            textBox_search.SelectAll();
+        }
+
+        internal void SetSearchStatus(string status)
+        {
+            if (_gridSearchStatus == null)
+            {
+                _gridSearchStatus = new ToolStripLabel();
+                Items.Add(_gridSearchStatus);
+            }
+            _gridSearchStatus.Text = status;
+        }
+
         /// <summary>
         /// Set Columns to search in
         /// </summary>

@@ -19,10 +19,10 @@
     <Product>Virtual ADGV</Product>
     <Authors>Davide Gironi (Original), Halil İbrahim Bozoğlu (Virtual Support)</Authors>
     <Company>RecordAnalyzer</Company>
-    <RepositoryUrl>https://github.com/HibrahimBoz/VirtualAdvanceddatagridview</RepositoryUrl>
+    <RepositoryUrl>https://github.com/HibrahimBoz/VirtualADGV</RepositoryUrl>
     <PackageId>VirtualADGV</PackageId>
     <PackageTags>DataGridView, WinForms, Advanced, Enhanced, Table, Grid, Filter, Sort, VirtualMode</PackageTags>
-    <PackageProjectUrl>https://github.com/HibrahimBoz/VirtualAdvanceddatagridview</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/HibrahimBoz/VirtualADGV</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>AdvancedDataGridView_logo.png</PackageIcon>

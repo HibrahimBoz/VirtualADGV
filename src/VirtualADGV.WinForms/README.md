@@ -12,7 +12,7 @@
 ### Download
 
 * **[NuGet (VirtualADGV)](https://www.nuget.org/packages/VirtualADGV)**
-* **[GitHub Repository](https://github.com/HibrahimBoz/VirtualAdvanceddatagridview)**
+* **[GitHub Repository](https://github.com/HibrahimBoz/VirtualADGV)**
 
 ### Key Features & Improvements
 
@@ -37,7 +37,7 @@
 ### İndir
 
 * **[NuGet (VirtualADGV)](https://www.nuget.org/packages/VirtualADGV)**
-* **[GitHub Deposu](https://github.com/HibrahimBoz/VirtualAdvanceddatagridview)**
+* **[GitHub Deposu](https://github.com/HibrahimBoz/VirtualADGV)**
 
 ### Temel Özellikler ve İyileştirmeler
 

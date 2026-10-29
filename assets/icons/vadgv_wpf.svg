@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="wpf-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="45%" stop-color="#312E81"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <linearGradient id="wpf-hero-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4338CA"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="wpf-buffer-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Arka plan disi saydam; ana tasiyici yuvarlatilmis kare -->
+  <rect x="64" y="64" width="896" height="896" rx="192" fill="url(#wpf-bg)" stroke="#6366F1" stroke-width="6" stroke-opacity="0.4"/>
+
+  <!-- Capraz vurgu arka plan isiklari -->
+  <rect x="340" y="270" width="220" height="418" rx="18" fill="#4F46E5" fill-opacity="0.2"/>
+  <rect x="160" y="380" width="580" height="88" rx="18" fill="#4F46E5" fill-opacity="0.25"/>
+
+  <!-- Baslik Satiri (Header) -->
+  <rect x="160" y="160" width="160" height="88" rx="18" fill="#23214A" stroke="#4F46E5" stroke-width="2.5" stroke-opacity="0.4"/>
+  <rect x="195" y="198" width="90" height="12" rx="6" fill="#818CF8" fill-opacity="0.75"/>
+
+  <!-- Baslik Sutun 2 (Suzgec Hunili Sutun) -->
+  <rect x="340" y="160" width="220" height="88" rx="18" fill="#3730A3" stroke="#818CF8" stroke-width="3"/>
+  <rect x="368" y="198" width="85" height="12" rx="6" fill="#FFFFFF"/>
+  <!-- Suzgec Hunisi Simgesi -->
+  <path d="M 480 186 L 522 186 L 507 207 L 507 225 L 496 220 L 496 207 Z" fill="#38BDF8"/>
+
+  <rect x="580" y="160" width="160" height="88" rx="18" fill="#23214A" stroke="#4F46E5" stroke-width="2.5" stroke-opacity="0.4"/>
+  <rect x="615" y="198" width="90" height="12" rx="6" fill="#818CF8" fill-opacity="0.75"/>
+
+  <!-- Veri Satiri 1 -->
+  <rect x="160" y="270" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="190" y="308" width="100" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <rect x="340" y="270" width="220" height="88" rx="18" fill="#252352" stroke="#4338CA" stroke-width="2" stroke-opacity="0.5"/>
+  <rect x="375" y="308" width="130" height="12" rx="6" fill="#818CF8" fill-opacity="0.55"/>
+
+  <rect x="580" y="270" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="610" y="308" width="90" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <!-- Veri Satiri 2: VURGULANAN SATIR (Capraz Vurgu) -->
+  <rect x="160" y="380" width="160" height="88" rx="18" fill="#2D2A60" stroke="#6366F1" stroke-width="2.5" stroke-opacity="0.6"/>
+  <rect x="190" y="418" width="105" height="12" rx="6" fill="#A5B4FC" fill-opacity="0.7"/>
+
+  <!-- KESISIM HUCRESI (Odak Noktasi) -->
+  <rect x="340" y="380" width="220" height="88" rx="18" fill="url(#wpf-hero-grad)" stroke="#FFFFFF" stroke-width="4"/>
+  <rect x="375" y="416" width="135" height="16" rx="8" fill="#FFFFFF"/>
+  <circle cx="530" cy="424" r="6" fill="#38BDF8"/>
+
+  <rect x="580" y="380" width="160" height="88" rx="18" fill="#2D2A60" stroke="#6366F1" stroke-width="2.5" stroke-opacity="0.6"/>
+  <rect x="610" y="418" width="95" height="12" rx="6" fill="#A5B4FC" fill-opacity="0.7"/>
+
+  <!-- Veri Satiri 3 -->
+  <rect x="160" y="490" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="190" y="528" width="85" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <rect x="340" y="490" width="220" height="88" rx="18" fill="#252352" stroke="#4338CA" stroke-width="2" stroke-opacity="0.5"/>
+  <rect x="375" y="528" width="120" height="12" rx="6" fill="#818CF8" fill-opacity="0.55"/>
+
+  <rect x="580" y="490" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="610" y="528" width="105" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <!-- Veri Satiri 4 -->
+  <rect x="160" y="600" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="190" y="638" width="105" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <rect x="340" y="600" width="220" height="88" rx="18" fill="#252352" stroke="#4338CA" stroke-width="2" stroke-opacity="0.5"/>
+  <rect x="375" y="638" width="140" height="12" rx="6" fill="#818CF8" fill-opacity="0.55"/>
+
+  <rect x="580" y="600" width="160" height="88" rx="18" fill="#181635" stroke="#312E81" stroke-width="2" stroke-opacity="0.3"/>
+  <rect x="610" y="638" width="80" height="12" rx="6" fill="#6366F1" fill-opacity="0.4"/>
+
+  <!-- Sag Kenarda Ince Mini Harita Seridi -->
+  <rect x="768" y="160" width="96" height="528" rx="20" fill="#121028" stroke="#312E81" stroke-width="2.5"/>
+  <g fill="#6366F1" opacity="0.6">
+    <rect x="782" y="180" width="50" height="6" rx="3"/>
+    <rect x="782" y="196" width="65" height="6" rx="3"/>
+    <rect x="782" y="212" width="42" height="6" rx="3"/>
+    <rect x="782" y="228" width="68" height="6" rx="3"/>
+    <rect x="782" y="244" width="55" height="6" rx="3"/>
+    <rect x="782" y="260" width="62" height="6" rx="3"/>
+    <rect x="782" y="276" width="48" height="6" rx="3"/>
+    <rect x="782" y="292" width="66" height="6" rx="3"/>
+    <rect x="782" y="308" width="52" height="6" rx="3"/>
+    <rect x="782" y="324" width="60" height="6" rx="3"/>
+    <rect x="782" y="340" width="45" height="6" rx="3"/>
+  </g>
+  <!-- Mini Harita Vizor Kaydirici (Viewport) -->
+  <rect x="772" y="364" width="88" height="126" rx="14" fill="#312E81" fill-opacity="0.75" stroke="#38BDF8" stroke-width="3"/>
+  <rect x="778" y="423" width="76" height="8" rx="4" fill="#FFFFFF"/>
+  <g fill="#6366F1" opacity="0.6">
+    <rect x="782" y="506" width="56" height="6" rx="3"/>
+    <rect x="782" y="522" width="68" height="6" rx="3"/>
+    <rect x="782" y="538" width="44" height="6" rx="3"/>
+    <rect x="782" y="554" width="64" height="6" rx="3"/>
+    <rect x="782" y="570" width="50" height="6" rx="3"/>
+    <rect x="782" y="586" width="60" height="6" rx="3"/>
+    <rect x="782" y="602" width="42" height="6" rx="3"/>
+    <rect x="782" y="618" width="66" height="6" rx="3"/>
+    <rect x="782" y="634" width="54" height="6" rx="3"/>
+    <rect x="782" y="650" width="62" height="6" rx="3"/>
+    <rect x="782" y="666" width="48" height="6" rx="3"/>
+  </g>
+
+  <!-- Alt Bolum: Sol Sanal Akis Gostergesi -->
+  <rect x="160" y="720" width="450" height="120" rx="24" fill="#121028" stroke="#312E81" stroke-width="2.5"/>
+  <rect x="188" y="770" width="394" height="20" rx="10" fill="#23214A"/>
+  <rect x="250" y="770" width="220" height="20" rx="10" fill="url(#wpf-buffer-grad)"/>
+  <rect x="330" y="763" width="64" height="34" rx="8" fill="#38BDF8"/>
+  <circle cx="218" cy="780" r="5" fill="#6366F1" fill-opacity="0.6"/>
+  <circle cx="505" cy="780" r="5" fill="#6366F1" fill-opacity="0.6"/>
+  <circle cx="545" cy="780" r="5" fill="#6366F1" fill-opacity="0.6"/>
+
+  <!-- Sag Rozet: WPF -->
+  <rect x="638" y="720" width="226" height="120" rx="28" fill="#FFFFFF" stroke="#38BDF8" stroke-width="4"/>
+  <text x="751" y="805" font-family="'Segoe UI', Arial, sans-serif" font-size="76" font-weight="900" text-anchor="middle" fill="#1E1B4B" letter-spacing="2">WPF</text>
+</svg>

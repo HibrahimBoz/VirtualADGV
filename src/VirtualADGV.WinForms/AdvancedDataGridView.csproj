@@ -9,13 +9,13 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyName>AdvancedDataGridView</AssemblyName>
-    <Version>1.1.6</Version>
-    <AssemblyVersion>1.1.6</AssemblyVersion>
-    <FileVersion>1.1.6</FileVersion>
-    <PackageVersion>1.1.6</PackageVersion>
+    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <Title>Virtual ADGV</Title>
     <Description>.NET WinForms DataGridView with advanced Filtering and Sorting capabilities - Enhanced Fork with Virtual Mode Support and High-Performance Selection Logic.</Description>
-    <PackageReleaseNotes>v1.1.3: Added SetTheme API for comprehensive Dark Mode support on filter dropdowns. Fixed Virtual Mode sorting precedence when using external data sources (e.g., DuckDB pushdown) and improved "Between" Custom Filter condition pre-selection.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.2.0: Fixed upstream issue #176 (checklist emptied after pressing Cancel twice when RemoveNodesOnSearch is off). Added checklist selection counter ("Items {0} / {1}", Turkish default "Öğe {0} / {1}"), hidden while values are loading. MenuStrip.Show(Control, int, int, bool) is now [Obsolete]; use Show(Control, int, int). Both changes ported from davidegironi/advanceddatagridview (6efd3b4, af24397).</PackageReleaseNotes>
     <Product>Virtual ADGV</Product>
     <Authors>Davide Gironi (Original), Halil İbrahim Bozoğlu (Virtual Support)</Authors>
     <Company>RecordAnalyzer</Company>

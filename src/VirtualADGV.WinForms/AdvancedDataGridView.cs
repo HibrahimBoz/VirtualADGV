@@ -127,6 +127,7 @@ namespace Zuby.ADGV
             ADGVIncludeNullValues,
             ADGVInvalidValue,
             ADGVFilterStringDescription,
+            ADGVCheckListCounter,
             ADGVFormTitle,
             ADGVLabelColumnNameText,
             ADGVLabelAnd,
@@ -180,6 +181,7 @@ namespace Zuby.ADGV
             { TranslationKey.ADGVIncludeNullValues.ToString(), "boş değerleri dahil et" },
             { TranslationKey.ADGVInvalidValue.ToString(), "Geçersiz Değer" },
             { TranslationKey.ADGVFilterStringDescription.ToString(), "Değerin {0} \"{1}\" olduğu satırları göster" },
+            { TranslationKey.ADGVCheckListCounter.ToString(), "Öğe {0} / {1}" },
             { TranslationKey.ADGVFormTitle.ToString(), "Özel Otomatik Filtre" },
             { TranslationKey.ADGVLabelColumnNameText.ToString(), "Filtre ölçütü:" },
             { TranslationKey.ADGVLabelAnd.ToString(), "Ve" },
@@ -1514,12 +1516,12 @@ namespace Zuby.ADGV
                 Rectangle rect = GetCellDisplayRectangle(column.Index, -1, true);
 
                 if (_filteredColumns.Contains(column.Name))
-                    filterMenu.Show(this, rect.Left, rect.Bottom, false);
+                    filterMenu.Show(this, rect.Left, rect.Bottom);
                 else
                 {
                     _filteredColumns.Add(column.Name);
                     if (_filterOrderList.Count() > 0 && _filterOrderList.Last() == column.Name)
-                        filterMenu.Show(this, rect.Left, rect.Bottom, true);
+                        filterMenu.Show(this, rect.Left, rect.Bottom);
                     else
                         filterMenu.Show(this, rect.Left, rect.Bottom, column.Name);
                 }

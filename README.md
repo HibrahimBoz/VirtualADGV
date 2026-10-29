@@ -6,6 +6,29 @@ An advanced, high-performance WPF DataGrid control with Excel-like filtering, so
 
 ---
 
+## What's new in 2.0.0
+
+- **VirtualADGV.Core 2.0.0** contains the UI-independent data contracts, paged list, minimap model,
+  row search, 64-bit ordinal selection and shared text defaults. Targets `net462;net8.0`, MIT,
+  with no runtime package dependencies.
+- **VirtualADGV.WPF 2.0.0** references Core. Existing `VirtualADGV.Data` namespaces and public
+  signatures are preserved through `TypeForwardedTo`; drawing, search and scrolling behavior is unchanged.
+- `VirtualSourceList.PageLoaded` reports the loaded page's `Start` and `Count` on the captured
+  synchronization context, after the existing placeholder notifications.
+- Sources now live under `src/VirtualADGV.Core` and `src/VirtualADGV.WPF`. WinForms features
+  and version are unchanged in this phase.
+
+Build and run the console checks on Windows:
+
+```powershell
+dotnet build VirtualADGV.sln -c Debug
+dotnet build VirtualADGV.sln -c Release
+dotnet run --project tests/VirtualADGV.WPF.Tests -- "$env:TEMP/VirtualADGV-shots"
+dotnet run --project tests/VirtualADGV.Core.Tests
+dotnet pack src/VirtualADGV.Core/VirtualADGV.Core.csproj -c Release
+dotnet pack src/VirtualADGV.WPF/VirtualADGV.WPF.csproj -c Release
+```
+
 ## What's new in 1.2.0
 
 - **.NET Framework 4.6.2** — the package now ships `net462` next to `net8.0-windows`. No extra dependencies.
@@ -78,13 +101,13 @@ An advanced, high-performance WPF DataGrid control with Excel-like filtering, so
 ## Installation
 
 ```bash
-dotnet add package VirtualADGV.WPF --version 1.2.0
+dotnet add package VirtualADGV.WPF --version 2.0.0
 ```
 
 Or in your project file:
 
 ```xml
-<PackageReference Include="VirtualADGV.WPF" Version="1.2.0" />
+<PackageReference Include="VirtualADGV.WPF" Version="2.0.0" />
 ```
 
 ---
@@ -288,6 +311,17 @@ Büyük veri setleri (1M+ satır) için Excel benzeri filtreleme, sıralama, ara
 
 ---
 
+## 2.0.0'da yenilikler
+
+- **VirtualADGV.Core 2.0.0**: arayüzden bağımsız veri sözleşmeleri, sayfalı liste, mini harita modeli,
+  arama motoru, 64 bit sıra seçimi ve ortak metinler. `net462;net8.0`, MIT; çalışma zamanında ek paket yok.
+- **VirtualADGV.WPF 2.0.0** Core'a başvurur. `VirtualADGV.Data` ad alanları ve public imzalar
+  `TypeForwardedTo` ile korunur. Çizim, arama ve kaydırma davranışı değişmedi.
+- `VirtualSourceList.PageLoaded`, yüklenen sayfanın `Start` ve `Count` bilgisini varsa yakalanan
+  `SynchronizationContext` üzerinde bildirir; yer tutucu satır bildirimleri korunur.
+- Kaynaklar `src/VirtualADGV.Core` ve `src/VirtualADGV.WPF` altında. WinForms özellikleri ve sürümü
+  bu aşamada değişmedi. Derleme ve konsol test komutları yukarıdadır.
+
 ## 1.2.0'da yenilikler
 
 - **.NET Framework 4.6.2** — paket artık `net8.0-windows` yanında `net462` de taşır. Ek bağımlılık yoktur.
@@ -316,7 +350,7 @@ Büyük veri setleri (1M+ satır) için Excel benzeri filtreleme, sıralama, ara
 ## Kurulum
 
 ```bash
-dotnet add package VirtualADGV.WPF --version 1.2.0
+dotnet add package VirtualADGV.WPF --version 2.0.0
 ```
 
 ## Kullanım

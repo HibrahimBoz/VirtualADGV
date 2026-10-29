@@ -12,6 +12,6 @@
     <AssemblyName>VirtualAdgvTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\VirtualADGV.WPF.csproj" />
+    <ProjectReference Include="..\..\src\VirtualADGV.WPF\VirtualADGV.WPF.csproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Console checks, no test framework. Windows target also verifies the WPF type forwards. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/VirtualADGV.Core/VirtualADGV.Core.csproj" />
+    <ProjectReference Include="../../src/VirtualADGV.WPF/VirtualADGV.WPF.csproj" />
+  </ItemGroup>
+</Project>

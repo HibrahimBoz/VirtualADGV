@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Paket (Release) iki hedefle derlenir: net8.0-windows + .NET Framework 4.6.2. Debug tek hedeftir:
+         Kaynaktan test koşumu çevrimdışı ortamda da geri yüklenebilsin diye (net462 başvuru derlemeleri gerekmez). -->
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
+    <TargetFrameworks Condition="'$(Configuration)' == 'Release'">net8.0-windows;net462</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- NuGet Metadata -->
+    <PackageId>VirtualADGV.WPF</PackageId>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <PackageVersion>2.0.0</PackageVersion>
+    <Authors>HibrahimBoz</Authors>
+    <Description>Advanced virtual DataGrid for WPF with filtering, sorting, search and theming support.</Description>
+    <PackageTags>wpf;datagrid;filter;sort;search;darkmode;excel;excel-filter;virtual;virtualization;sql-filter;grid;advanced-datagrid;datatable;wpf-controls;localization;theme</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/HibrahimBoz/VirtualADGV</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReleaseNotes>1.2.0: .NET Framework 4.6.2 target (net462) besides net8.0-windows; data source contract VirtualADGV.Data (IVirtualTableSource, IVirtualRelationSource) with VirtualSourceList adapter: 64-bit ordinals, async pages with placeholders for slow (remote) sources, windowed mode with a 64-bit scroll bar for sources above int.MaxValue rows (selection kept by ordinal). Deferred vertical thumb drag (row hint while dragging; the grid scrolls once on a 100 ms pause or on release) and optional IVirtualPrefetchList so thumb and minimap load target rows in the background before scrolling (newest target wins). Fix: a theme Thumb MinHeight no longer lets the page button cover the thumb on very long lists. Existing grids unchanged. 1.1.0: crosshair highlight (selected cell's row and column), VS Code-style minimap (marks, selection, search hits; click/drag to scroll; works on 1M+ row virtual sources), built-in in-memory Ctrl+F search, theme keys ThemeCrosshairBg / ThemeSearchHitBg. Fixes: filler-header filter button exception, corner button layout loop, Items.Refresh on Ctrl+A.
+      2.0.0: VirtualADGV.Core extraction with ProjectReference dependency; existing data types forwarded with TypeForwardedTo. WPF drawing, search and scrolling behavior preserved.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../VirtualADGV.Core/VirtualADGV.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="\" />
+    <None Include="../../icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

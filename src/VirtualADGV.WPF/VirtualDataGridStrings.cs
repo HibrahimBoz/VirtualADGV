@@ -15,39 +15,40 @@ namespace VirtualADGV.WPF
     /// </example>
     public class VirtualDataGridStrings
     {
+        private readonly VirtualADGV.Grid.VirtualGridTexts _gridTexts = new();
         // ── Search bar ────────────────────────────────────────────
         /// <summary>Label shown in the column selector when searching all columns.</summary>
-        public string AllColumns { get; set; } = "All Columns";
+        public string AllColumns { get => _gridTexts.AllColumns; set => _gridTexts.AllColumns = value; }
 
         /// <summary>Placeholder text inside the search box.</summary>
-        public string SearchPlaceholder { get; set; } = "Search...";
+        public string SearchPlaceholder { get => _gridTexts.SearchPlaceholder; set => _gridTexts.SearchPlaceholder = value; }
 
         /// <summary>Label for the search box.</summary>
-        public string SearchLabel { get; set; } = "Search:";
+        public string SearchLabel { get => _gridTexts.SearchLabel; set => _gridTexts.SearchLabel = value; }
 
         /// <summary>Label for the column selector.</summary>
-        public string ColumnLabel { get; set; } = "Column:";
+        public string ColumnLabel { get => _gridTexts.ColumnLabel; set => _gridTexts.ColumnLabel = value; }
 
         /// <summary>Label for the case sensitive checkbox.</summary>
-        public string CaseSensitive { get; set; } = "Case Sensitive";
+        public string CaseSensitive { get => _gridTexts.CaseSensitive; set => _gridTexts.CaseSensitive = value; }
 
         /// <summary>Label for the find next button.</summary>
-        public string FindNext { get; set; } = "Find Next";
+        public string FindNext { get => _gridTexts.FindNext; set => _gridTexts.FindNext = value; }
 
         /// <summary>Label for the find reset/start over button.</summary>
-        public string FindReset { get; set; } = "Restart Search";
+        public string FindReset { get => _gridTexts.FindReset; set => _gridTexts.FindReset = value; }
 
         /// <summary>Arama eşleşmesi bulunamadığında gösterilen metin.</summary>
-        public string SearchNoMatch { get; set; } = "No matches found.";
+        public string SearchNoMatch { get => _gridTexts.SearchNoMatch; set => _gridTexts.SearchNoMatch = value; }
 
         /// <summary>Arama tablo sonuna ulaştığında gösterilen metin.</summary>
-        public string SearchEndReached { get; set; } = "No matches found (end of table reached; use Restart Search).";
+        public string SearchEndReached { get => _gridTexts.SearchEndReached; set => _gridTexts.SearchEndReached = value; }
 
         /// <summary>Toplam arama eşleşmesi sayısının biçimi.</summary>
-        public string SearchMatchCountFormat { get; set; } = "{0:N0} matches";
+        public string SearchMatchCountFormat { get => _gridTexts.SearchMatchCountFormat; set => _gridTexts.SearchMatchCountFormat = value; }
 
         /// <summary>Mini harita sürükleme ipucunun satır biçimi.</summary>
-        public string MinimapRowFormat { get; set; } = "Row: {0:N0}";
+        public string MinimapRowFormat { get => _gridTexts.MinimapRowFormat; set => _gridTexts.MinimapRowFormat = value; }
 
         // ── Filter popup — sort buttons ───────────────────────────
         /// <summary>Sort ascending label for text columns (A → Z).</summary>

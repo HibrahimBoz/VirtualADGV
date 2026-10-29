@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Data;
+using VirtualADGV.Grid;
 
 namespace VirtualADGV.WPF;
 
@@ -27,7 +28,7 @@ public static class GridSearch
     // Bilinmeyen IList bir sayfalı kaynak olabilir; boyutu küçükken de taranmaz.
     internal static bool IsInMemory(DataGrid grid)
     {
-        if (grid.Items.Count > 200_000) return false;
+        if (grid.Items.Count > RowSearch.InMemoryRowLimit) return false;
         object? source = grid.ItemsSource;
         while (source is ICollectionView view && !ReferenceEquals(source, view.SourceCollection))
             source = view.SourceCollection;
@@ -40,60 +41,35 @@ public static class GridSearch
 
     /// <summary>Başlangıçtan sona ilk eşleşmenin görsel sırasını verir; sarma yapmaz.</summary>
     public static int FindNext(DataGrid grid, string text, string? columnHeader, bool caseSensitive, int startIndex)
-    {
-        foreach (int i in Matches(grid, text, columnHeader, caseSensitive, startIndex)) return i;
-        return -1;
-    }
+        => string.IsNullOrEmpty(text) ? -1 : CreateSearch(grid, columnHeader, caseSensitive)?.FindNext(text, startIndex) ?? -1;
 
     /// <summary>Tüm eşleşmelerin görsel sıralarını tek geçişte verir.</summary>
     public static List<int> FindAll(DataGrid grid, string text, string? columnHeader, bool caseSensitive)
-        => Matches(grid, text, columnHeader, caseSensitive, 0).ToList();
+        => string.IsNullOrEmpty(text) ? new List<int>() : CreateSearch(grid, columnHeader, caseSensitive)?.FindAll(text) ?? new List<int>();
 
-    private static IEnumerable<int> Matches(DataGrid grid, string text, string? columnHeader, bool caseSensitive, int startIndex)
+    private static RowSearch? CreateSearch(DataGrid grid, string? columnHeader, bool caseSensitive)
     {
-        if (grid == null || string.IsNullOrEmpty(text)) yield break;
-        var columns = new List<KeyValuePair<Binding, string>>();
+        if (grid == null) return null;
+        var columns = new List<RowSearchColumn>();
         foreach (var col in grid.Columns.OfType<DataGridBoundColumn>())
         {
             if (!string.IsNullOrEmpty(columnHeader) && HeaderKey(col.Header?.ToString()) != HeaderKey(columnHeader)) continue;
-            if (col.Binding is Binding b && !string.IsNullOrEmpty(b.Path?.Path)) columns.Add(new KeyValuePair<Binding, string>(b, b.Path.Path));
-        }
-        if (columns.Count == 0) yield break;
-        var culture = grid.Language?.GetSpecificCulture() ?? CultureInfo.CurrentCulture;
-        var comparison = caseSensitive ? StringComparison.Ordinal : StringComparison.InvariantCultureIgnoreCase;
-        for (int i = Math.Max(0, startIndex); i < grid.Items.Count; i++)
-        {
-            object item = grid.Items[i];
-            if (item == null) continue;
-            foreach (var column in columns)
+            if (col.Binding is Binding binding && !string.IsNullOrEmpty(binding.Path?.Path))
             {
-                Binding binding = column.Key;
-                string path = column.Value;
-                object? val = null;
-                if (item is DataRowView row)
-                {
-                    if (row.Row.Table.Columns.Contains(path)) val = row[path];
-                }
-                else val = PropertyCache.GetOrAdd(new PropertyKey(item.GetType(), path), key => key.Type.GetProperty(key.Path))?.GetValue(item);
-                if (val == DBNull.Value) val = null;
-                string display;
-                if (val == null) display = "";
-                else if (!string.IsNullOrEmpty(binding.StringFormat))
-                {
-                    string fmt = binding.StringFormat;
-                    try { display = string.Format(culture, fmt.IndexOf('{') >= 0 ? fmt : "{0:" + fmt + "}", val); }
-                    catch (FormatException) { display = Convert.ToString(val, culture) ?? ""; }
-                }
-                else display = Convert.ToString(val, culture) ?? "";
-                string? raw = val is IFormattable formattable ? formattable.ToString(null, CultureInfo.InvariantCulture) : null;
-                if ((display.Length > 0 && display.IndexOf(text, comparison) >= 0) || (raw != null && raw.IndexOf(text, comparison) >= 0))
-                {
-                    yield return i;
-                    break;
-                }
+                string path = binding.Path!.Path!;
+                columns.Add(new RowSearchColumn(item => ReadValue(item, path), binding.StringFormat));
             }
         }
+        if (columns.Count == 0) return null;
+        var culture = grid.Language?.GetSpecificCulture() ?? CultureInfo.CurrentCulture;
+        return new RowSearch(grid.Items.Count, i => grid.Items[i], columns, culture, caseSensitive);
     }
 
+    private static object? ReadValue(object item, string path)
+    {
+        if (item is DataRowView row)
+            return row.Row.Table.Columns.Contains(path) ? row[path] : null;
+        return PropertyCache.GetOrAdd(new PropertyKey(item.GetType(), path), key => key.Type.GetProperty(key.Path))?.GetValue(item);
+    }
     private static string HeaderKey(string? header) => (header ?? "").TrimEnd(' ', '⏷');
 }

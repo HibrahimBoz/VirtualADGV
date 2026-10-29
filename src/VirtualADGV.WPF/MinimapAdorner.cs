@@ -5,6 +5,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using VirtualADGV.Grid;
 
 namespace VirtualADGV.WPF;
 
@@ -13,16 +14,12 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     private readonly VirtualDataGrid _grid;
     private readonly ScrollViewer _viewer;
     private readonly DispatcherTimer _timer;
-    private IReadOnlyList<long> _selected = Array.Empty<long>();
-    private long[] _markBuckets = Array.Empty<long>(), _selectionBuckets = Array.Empty<long>(), _searchBuckets = Array.Empty<long>();
-    private bool _bucketsDirty = true, _dragging;
-    private double _pendingRatio;
-    private int _bucketCount, _totalRows;
+    private readonly MinimapModel _model = new();
     private Rect _viewport;
     internal Rect MapBounds { get; private set; }
     internal Rect ViewportBounds => _viewport;
-    internal IReadOnlyList<long> MarkBuckets { get { EnsureBuckets(); return _markBuckets; } }
-    internal IReadOnlyList<long> SelectionBuckets { get { EnsureBuckets(); return _selectionBuckets; } }
+    internal IReadOnlyList<long> MarkBuckets { get { EnsureBuckets(); return _model.MarkBuckets; } }
+    internal IReadOnlyList<long> SelectionBuckets { get { EnsureBuckets(); return _model.SelectionBuckets; } }
     internal string RowHint { get; private set; } = "";
     private static readonly Brush Surface = CrosshairAdorner.FrozenBrush(Colors.Gray);
     private static readonly Brush Gold = CrosshairAdorner.FrozenBrush(Colors.Gold);
@@ -41,10 +38,10 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     }
     internal void SetSelection(IReadOnlyList<long> ordinals)
     {
-        _selected = ordinals;
+        _model.Selection = ordinals;
         InvalidateBuckets();
     }
-    internal void InvalidateBuckets() { _bucketsDirty = true; InvalidateVisual(); }
+    internal void InvalidateBuckets() { _model.InvalidateBuckets(); InvalidateVisual(); }
     internal void RefreshGeometry()
     {
         var size = AdornedElement.RenderSize;
@@ -57,46 +54,27 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         if (MapBounds != bounds)
         {
             MapBounds = bounds;
-            _bucketsDirty = true;
+            _model.InvalidateBuckets();
             InvalidateVisual();
         }
         if (!shown) { CancelDrag(); return; }
-        var viewport = CalculateViewport(_dragging ? TargetOffset(_pendingRatio) : _viewer.VerticalOffset);
+        var viewport = CalculateViewport(_model.IsDragging ? TargetOffset(_model.TargetRatio) : _viewer.VerticalOffset);
         if (viewport != _viewport) { _viewport = viewport; InvalidateVisual(); }
     }
     private Rect CalculateViewport(double offset)
     {
         if (MapBounds.IsEmpty || _viewer.ExtentHeight <= 0) return Rect.Empty;
-        double height = Math.Min(MapBounds.Height, Math.Max(6, _viewer.ViewportHeight / _viewer.ExtentHeight * MapBounds.Height));
-        double top = Compat.Clamp(offset / _viewer.ExtentHeight * MapBounds.Height, 0, MapBounds.Height - height);
-        return new Rect(MapBounds.X, MapBounds.Y + top, MapBounds.Width, height);
+        var viewport = MinimapModel.CalculateViewport(offset, _viewer.ExtentHeight, _viewer.ViewportHeight, 6 / MapBounds.Height);
+        return new Rect(MapBounds.X, MapBounds.Y + viewport.TopRatio * MapBounds.Height,
+            MapBounds.Width, viewport.HeightRatio * MapBounds.Height);
     }
     internal static long[] Bucketize(IReadOnlyList<long> ordinals, int total, int height)
-    {
-        var buckets = new long[height];
-        Compat.Fill(buckets, -1L);
-        if (total <= 0 || height == 0) return buckets;
-        for (int i = 0; i < ordinals.Count; i++)
-        {
-            long ordinal = ordinals[i];
-            if (ordinal < 0 || ordinal >= total) continue;
-            // Kayan nokta yuvarlaması çok büyük toplamlarda y = height verebilir: sınırla.
-            int y = Math.Min(height - 1, (int)(ordinal * (double)height / total));
-            if (buckets[y] < 0 || ordinal < buckets[y]) buckets[y] = ordinal;
-        }
-        return buckets;
-    }
+        => MinimapModel.Bucketize(ordinals, total, height);
     private void EnsureBuckets()
     {
-        int height = MapBounds.IsEmpty ? 0 : Math.Max(1, (int)Math.Ceiling(MapBounds.Height));
-        int total = _grid.Items.Count;
-        if (!_bucketsDirty && height == _bucketCount && total == _totalRows) return;
-        _bucketCount = height;
-        _totalRows = total;
-        _markBuckets = Bucketize(_grid.MinimapMarks, total, height);
-        _selectionBuckets = Bucketize(_selected, total, height);
-        _searchBuckets = Bucketize(_grid.MinimapSearchHits, total, height);
-        _bucketsDirty = false;
+        _model.SetGeometry(_grid.Items.Count, MapBounds.IsEmpty ? 0 : MapBounds.Y, MapBounds.IsEmpty ? 0 : MapBounds.Height);
+        if (!ReferenceEquals(_model.Marks, _grid.MinimapMarks)) _model.Marks = _grid.MinimapMarks;
+        if (!ReferenceEquals(_model.SearchHits, _grid.MinimapSearchHits)) _model.SearchHits = _grid.MinimapSearchHits;
     }
     protected override void OnRender(DrawingContext dc) => DrawMap(dc);
     // Test aynı çizim yolunu DrawingVisual üzerinde süreler.
@@ -106,13 +84,13 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         EnsureBuckets();
         dc.PushClip(new RectangleGeometry(new Rect(AdornedElement.RenderSize)));
         Brush text = Resource("ThemeText", Text);
-        dc.PushOpacity(IsMouseOver || _dragging ? 0.85 : 0.35);
+        dc.PushOpacity(IsMouseOver || _model.IsDragging ? 0.85 : 0.35);
         dc.DrawRectangle(Resource("ThemeSurface", Resource("ThemeGridBg", Surface)), new Pen(text, 1), MapBounds);
         dc.Pop();
         // Üç katman ayrı şeritte (VS Code süslemeleri gibi): yoğun altın sarısı işaret (ör. %20 satır) seçimi ve aramayı örtmesin.
-        DrawBuckets(dc, _markBuckets, Resource("ThemeHighlightBg", Gold), 0.04, 0.30);
-        DrawBuckets(dc, _selectionBuckets, Resource("ThemeAccent", Accent), 0.36, 0.28, 2);
-        DrawBuckets(dc, _searchBuckets, Resource("ThemeSearchHitBg", Search), 0.66, 0.30);
+        DrawBuckets(dc, _model.MarkBuckets, Resource("ThemeHighlightBg", Gold), 0.04, 0.30);
+        DrawBuckets(dc, _model.SelectionBuckets, Resource("ThemeAccent", Accent), 0.36, 0.28, 2);
+        DrawBuckets(dc, _model.SearchBuckets, Resource("ThemeSearchHitBg", Search), 0.66, 0.30);
         if (!_viewport.IsEmpty)
         {
             dc.PushOpacity(0.2);
@@ -120,7 +98,7 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
             dc.Pop();
             dc.DrawRectangle(null, new Pen(text, 1), _viewport);
         }
-        if (_dragging)
+        if (_model.IsDragging)
         {
             var label = new FormattedText(RowHint, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
                 new Typeface("Segoe UI"), 12, text, VisualTreeHelper.GetDpi(this).PixelsPerDip);
@@ -132,10 +110,10 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         dc.Pop();
     }
     private Brush Resource(string key, Brush fallback) => _grid.TryFindResource(key) as Brush ?? fallback;
-    private void DrawBuckets(DrawingContext dc, long[] buckets, Brush brush, double left, double width, double thickness = 1)
+    private void DrawBuckets(DrawingContext dc, IReadOnlyList<long> buckets, Brush brush, double left, double width, double thickness = 1)
     {
-        double scale = MapBounds.Height / Math.Max(1, buckets.Length);
-        for (int y = 0; y < buckets.Length; y++)
+        double scale = MapBounds.Height / Math.Max(1, buckets.Count);
+        for (int y = 0; y < buckets.Count; y++)
             if (buckets[y] >= 0)
                 dc.DrawRectangle(brush, null, new Rect(MapBounds.X + MapBounds.Width * left,
                     MapBounds.Y + y * scale, MapBounds.Width * width, Math.Min(MapBounds.Height - y * scale, Math.Max(thickness, scale))));
@@ -146,60 +124,53 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     {
         if (MapBounds.IsEmpty || MapBounds.Height <= 0) return 0;   // 0'a bölme NaN üretip ScrollToVerticalOffset'e giderdi
         EnsureBuckets();
-        double ratio = Compat.Clamp((y - MapBounds.Y) / MapBounds.Height, 0, 1);
-        if (snap)
-        {
-            int bucket = Compat.Clamp((int)(ratio * _bucketCount), 0, Math.Max(0, _bucketCount - 1));
-            // En yakın dolu kova; eşit uzaklıkta üstteki ilk sıra kazanır.
-            for (int distance = 0; distance <= 2; distance++)
-                foreach (int index in distance == 0 ? new[] { bucket } : new[] { bucket - distance, bucket + distance })
-                    if (index >= 0 && index < _markBuckets.Length && _markBuckets[index] >= 0)
-                        return _markBuckets[index] / (double)Math.Max(1, _grid.Items.Count);
-        }
-        return ratio;
+        return _model.RatioAt(y, snap);
     }
-    internal double TargetOffset(double ratio) => Compat.Clamp(ratio * _viewer.ExtentHeight - _viewer.ViewportHeight / 2,
-        0, Math.Max(0, _viewer.ExtentHeight - _viewer.ViewportHeight));
+    internal double TargetOffset(double ratio) => MinimapModel.TargetOffset(ratio, _viewer.ExtentHeight, _viewer.ViewportHeight);
     internal void ClickAt(double y)
     {
         _grid.PrefetchAndScroll(_viewer, TargetOffset(RatioAt(y, true)));
     }
     internal void BeginDrag(double y)
     {
-        _dragging = true;
-        UpdateDrag(y, true);
+        EnsureBuckets();
+        _model.BeginDrag(y);
+        UpdateDrag();
     }
-    internal void MoveDrag(double y) => UpdateDrag(y, false);
-    private void UpdateDrag(double y, bool snap)
+    internal void MoveDrag(double y)
     {
-        if (!_dragging || MapBounds.IsEmpty) return;
+        EnsureBuckets();
+        _model.MoveDrag(y);
+        UpdateDrag();
+    }
+    private void UpdateDrag()
+    {
+        if (!_model.IsDragging || MapBounds.IsEmpty) return;
         _grid.CancelPrefetchScroll();
-        _pendingRatio = RatioAt(y, snap);
-        long row = Math.Min(Math.Max(0, _grid.Items.Count - 1), (long)(_pendingRatio * _grid.Items.Count)) + 1;
-        RowHint = string.Format(CultureInfo.CurrentCulture, _grid.Strings.MinimapRowFormat, row);
+        RowHint = _model.FormatRowHint(_grid.Strings.MinimapRowFormat, CultureInfo.CurrentCulture);
         _timer.Stop();
-        _timer.Start();
+        if (_model.NeedsDeferredScroll) _timer.Start();
         RefreshGeometry();
         InvalidateVisual();
     }
     internal void EndDrag()
     {
-        if (!_dragging) return;
+        if (!_model.IsDragging) return;
         _timer.Stop();
-        _grid.PrefetchAndScroll(_viewer, TargetOffset(_pendingRatio));
-        _dragging = false;
+        _grid.PrefetchAndScroll(_viewer, TargetOffset(_model.TargetRatio));
+        _model.EndDrag();
         InvalidateVisual();
     }
     private void OnDelay(object? sender, EventArgs e)
     {
         _timer.Stop();
-        if (_dragging) _grid.PrefetchAndScroll(_viewer, TargetOffset(_pendingRatio));
+        if (_model.ConsumeDeferredScroll()) _grid.PrefetchAndScroll(_viewer, TargetOffset(_model.TargetRatio));
     }
     private void CancelDrag()
     {
         _timer.Stop();
-        if (_dragging) _grid.CancelPrefetchScroll();
-        _dragging = false;
+        if (_model.IsDragging) _grid.CancelPrefetchScroll();
+        _model.CancelDrag();
         if (IsMouseCaptured) ReleaseMouseCapture();
     }
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -211,11 +182,11 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
-        if (_dragging) { MoveDrag(e.GetPosition(this).Y); e.Handled = true; }
+        if (_model.IsDragging) { MoveDrag(e.GetPosition(this).Y); e.Handled = true; }
     }
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
-        if (!_dragging) return;
+        if (!_model.IsDragging) return;
         EndDrag();
         ReleaseMouseCapture();
         e.Handled = true;

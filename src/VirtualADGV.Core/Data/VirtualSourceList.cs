@@ -102,6 +102,9 @@ public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChan
     /// <inheritdoc/>
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
+    /// <summary>A page arrived. Posted to the captured synchronization context, if any, after filling placeholders.</summary>
+    public event EventHandler<VirtualPageLoadedEventArgs>? PageLoaded;
+
     /// <summary>DataGrid'in gördüğü satır sayısı (pencereli kipte pencere uzunluğu).</summary>
     public int Count => IsWindowed
         ? (int)Math.Min(_options.WindowSize, Math.Max(0, _source.Count - _windowStart))
@@ -243,9 +246,10 @@ public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChan
             // Hata ya da iptal: bekleyen yer tutucular bırakılır (boş kalır); sonraki erişim sayfayı yeniden ister.
             if (_waiting.TryGetValue(page, out waiting)) _waiting.Remove(page);
         }
-        if (waiting == null || result == null) return;
+        if (result == null) return;
         void Fill()
         {
+            if (waiting != null)
             foreach (var weak in waiting)
             {
                 if (!weak.TryGetTarget(out var row)) continue;
@@ -253,6 +257,9 @@ public sealed class VirtualSourceList : IList, ITypedList, INotifyCollectionChan
                 if (offset >= 0 && offset < result.Count) row.Fill(result.Keys[offset], result.Values[offset]);
                 else row.Fill(null, null);
             }
+            // Gönderim kuyruktayken liste bırakıldıysa ya da önbellek boşaltıldıysa olay bayat sayfayı bildirmez.
+            if (_disposed || version != _version) return;
+            PageLoaded?.Invoke(this, new VirtualPageLoadedEventArgs(result.Start, result.Count));
         }
         if (_context != null) _context.Post(_ => Fill(), null); else Fill();
     }

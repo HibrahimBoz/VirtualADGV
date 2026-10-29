@@ -1,3 +1,19 @@
+Sürüm: 2.0.0 (Arayüzden Bağımsız Core Ayrımı)
+Tarih: 29 Ekim 2026
+
+* Yeni VirtualADGV.Core 2.0.0: net462 ve net8.0; arayüz tipi ve çalışma zamanı paket bağımlılığı yok; MIT.
+* VirtualADGV.Data ad alanının tamamı Core'a taşındı. Ad alanları ve mevcut public imzalar korundu.
+  WPF 2.0.0, taşınan 10 public tipi TypeForwardedTo ile Core'a yönlendirir; iki derleme de imzasızdır.
+* VirtualSourceList.PageLoaded: başlangıç sırası ve yüklenen satır sayısı; varsa SynchronizationContext'e
+  post edilir. Yer tutucu satırların mevcut INotifyPropertyChanged bildirimi korunur.
+* VirtualADGV.Grid: MinimapModel, RowSearch, OrdinalSelection ve VirtualGridTexts eklendi.
+  Mini haritanın çizimi ve 100 ms zamanlayıcısı WPF'te kalır; mevcut çizim, arama ve kaydırma davranışı değişmedi.
+* WPF projesi src/VirtualADGV.WPF altına taşındı; Core'a ProjectReference ile bağlanır.
+  WPF paketinin bağımlılığı VirtualADGV.Core 2.0.0'dır. Kök çözüm iki konsol test projesini de içerir.
+* WinForms özellikleri ve sürümü bu aşamada değişmedi.
+
+----------------------------------------------------------------------
+
 Sürüm: 1.2.0 (Veri Kaynağı Sözleşmesi, 64 Bit Satır Sırası, .NET Framework 4.6.2)
 Tarih: 28 Ekim 2026
 

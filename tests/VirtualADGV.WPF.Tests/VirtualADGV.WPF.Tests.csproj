@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Konsol koşumu (test çatısı yok, paket bağımlılığı yok): başarısızlıkta çıkış kodu 1.
+       Çalıştırma: dotnet run (proje klasörü tests/VirtualADGV.WPF.Tests; ilk argüman ekran görüntüsü klasörü) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <!-- Kütüphane iç tiplere bu derleme adıyla erişim verir (Properties/AssemblyInfo.cs: InternalsVisibleTo). -->
+    <AssemblyName>VirtualAdgvTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VirtualADGV.WPF.csproj" />
+  </ItemGroup>
+</Project>

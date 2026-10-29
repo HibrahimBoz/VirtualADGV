@@ -53,6 +53,7 @@ public partial class VirtualDataGrid
     /// <inheritdoc/>
     protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
     {
+        CancelThumbDrag();
         base.OnItemsSourceChanged(oldValue, newValue);
         if (_windowList != null) _windowList.WindowMoving -= OnWindowMoving;
         _windowList = newValue as VirtualSourceList;

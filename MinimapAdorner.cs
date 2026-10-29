@@ -162,7 +162,7 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         0, Math.Max(0, _viewer.ExtentHeight - _viewer.ViewportHeight));
     internal void ClickAt(double y)
     {
-        _viewer.ScrollToVerticalOffset(TargetOffset(RatioAt(y, true)));
+        _grid.PrefetchAndScroll(_viewer, TargetOffset(RatioAt(y, true)));
     }
     internal void BeginDrag(double y)
     {
@@ -173,6 +173,7 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     private void UpdateDrag(double y, bool snap)
     {
         if (!_dragging || MapBounds.IsEmpty) return;
+        _grid.CancelPrefetchScroll();
         _pendingRatio = RatioAt(y, snap);
         long row = Math.Min(Math.Max(0, _grid.Items.Count - 1), (long)(_pendingRatio * _grid.Items.Count)) + 1;
         RowHint = string.Format(CultureInfo.CurrentCulture, _grid.Strings.MinimapRowFormat, row);
@@ -185,18 +186,19 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
     {
         if (!_dragging) return;
         _timer.Stop();
-        _viewer.ScrollToVerticalOffset(TargetOffset(_pendingRatio));
+        _grid.PrefetchAndScroll(_viewer, TargetOffset(_pendingRatio));
         _dragging = false;
         InvalidateVisual();
     }
     private void OnDelay(object? sender, EventArgs e)
     {
         _timer.Stop();
-        if (_dragging) _viewer.ScrollToVerticalOffset(TargetOffset(_pendingRatio));
+        if (_dragging) _grid.PrefetchAndScroll(_viewer, TargetOffset(_pendingRatio));
     }
     private void CancelDrag()
     {
         _timer.Stop();
+        if (_dragging) _grid.CancelPrefetchScroll();
         _dragging = false;
         if (IsMouseCaptured) ReleaseMouseCapture();
     }
@@ -230,5 +232,5 @@ internal sealed class MinimapAdorner : Adorner, IDisposable
         // ölçülerek denendi ve oluşmadı; VirtualAdgvTests "tekerlek ... bir adim" kontrolü bunu kilitler.
         e.Handled = false;
     }
-    public void Dispose() { CancelDrag(); _timer.Tick -= OnDelay; }
+    public void Dispose() { CancelDrag(); _grid.CancelPrefetchScroll(); _timer.Tick -= OnDelay; }
 }

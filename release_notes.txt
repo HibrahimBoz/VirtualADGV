@@ -11,6 +11,12 @@ Tarih: 28 Ekim 2026
   kaydırma çubuğu durur, pencere kenara yaklaşınca kayar; seçim görsel sıraya göre korunur. Bu kipte mini harita gizlidir.
   Yeni API: ScrollToOrdinal(long), FirstVisibleOrdinal, IsWindowedSource.
 * Pencereli olmayan tablolarda görsel ağaç ve çizim 1.1.0 ile aynıdır (ekran görüntüleri piksel piksel karşılaştırıldı).
+* Dikey kaydırma çubuğunun tutamacı sürüklenirken tablo kaymaz; tutamacın yanında hedef satır gösterilir. Fare 100 ms
+  durursa ya da bırakılırsa tablo bir kez kayar. Ölçüldü (1 M satır, gerçek fare): sürükleme boyunca UI gecikmesi p95 1–3 ms.
+* Yeni isteğe bağlı arayüz IVirtualPrefetchList: ItemsSource bunu uygularsa tutamaç ve mini harita kaydırmadan önce
+  hedef satırları arka planda yükletir. Yeni hedef eskisini iptal eder. Arayüz yoksa davranış 1.1.0 ile aynıdır.
+* Düzeltme: tema tutamaca MinHeight verince sayfa düğmesi tutamacın alt kısmını örtüyordu. Çok satırlı tabloda tutamacın
+  ortasına basmak sürükleme yerine sayfa sayfa tekrarlı kaydırma başlatıyordu. Track artık tutamacın görünen boyunu hesaba katar.
 
 ----------------------------------------------------------------------
 

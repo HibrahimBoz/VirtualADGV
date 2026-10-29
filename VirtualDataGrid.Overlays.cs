@@ -117,6 +117,7 @@ public partial class VirtualDataGrid
             VisualDescendants<ItemsPresenter>(v).Any(p => p.TemplatedParent == this));
         if (viewer == null) return;
         viewer.ApplyTemplate();
+        AttachThumbScroll(viewer);
         var presenter = VisualDescendants<ScrollContentPresenter>(viewer).FirstOrDefault();
         if (presenter == null) return;
         var layer = AdornerLayer.GetAdornerLayer(presenter);
@@ -135,6 +136,7 @@ public partial class VirtualDataGrid
     }
     private void DetachOverlays()
     {
+        DetachThumbScroll();
         _selectionOperation?.Abort();
         _selectionOperation = null;
         LayoutUpdated -= OnOverlayLayout;
@@ -183,6 +185,7 @@ public partial class VirtualDataGrid
         _ordinalCache = null;
         if (e.Action == NotifyCollectionChangedAction.Reset)
         {
+            CancelThumbDrag();
             // Sanal satır eşitliği eski sırayı yeni veriyle eşitleyebilir.
             _selectionCleared = true;
             _selectionOperation?.Abort();
